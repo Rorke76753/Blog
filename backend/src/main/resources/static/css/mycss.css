@@ -1,0 +1,25 @@
+.topbar-item-padding{
+    padding-top: 0.2em !important;
+    padding-bottom: 0.2em !important;
+    border: transparent !important;
+}
+
+.topbar-item-font{
+    word-spacing: 20px !important;
+    color: white !important;
+    font-weight: lighter !important;
+    font-size: medium !important;
+}
+
+.sidebar-item-font{
+    padding-left: 27px;
+}
+
+.article-div-margin{
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.article-input-padding{
+    padding-top: 5px;
+}

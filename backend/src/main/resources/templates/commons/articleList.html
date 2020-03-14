@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table class="ui striped table celled" th:fragment="articleList">
+    <thead>
+    <tr>
+        <th>编号</th>
+        <th>标题</th>
+        <th>描述</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="article:${articles}">
+        <td th:text="${article.id}"></td>
+        <td><a th:text="${article.title}" href=""></a></td>
+        <td th:text="${article.description}"></td>
+        <td></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

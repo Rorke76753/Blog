@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="Semantic/semantic.min.css">
+    <link rel="stylesheet" type="text/css" href="css/mycss.css">
+    <script src="Semantic/semantic.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.4/dist/semantic.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.4/dist/semantic.min.js"></script>
+</head>
+<body>
+<div th:replace="commons/bar::topbar"></div>
+<div class="ui grid">
+    <div class="three wide column">
+        <div th:replace="commons/bar::sidebar"></div>
+    </div>
+    <div class="thirteen wide column ">
+<!--        <div th:replace="commons/articleList::articleList"></div>-->
+    </div>
+</div>
+
+</div>
+</div>
+</body>
+<script>
+    $('.ui.accordion').accordion();
+</script>
+</html>
