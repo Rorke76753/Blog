@@ -3,7 +3,7 @@ package edu.rorke.blog.background.management.controller;
 import edu.rorke.blog.background.management.entity.Article;
 import edu.rorke.blog.background.management.entity.Tag;
 import edu.rorke.blog.background.management.service.ArticleService;
-import edu.rorke.blog.background.management.service.TagsService;
+import edu.rorke.blog.background.management.service.TagListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,11 +17,11 @@ import java.util.List;
 @RequestMapping("/article")
 public class ArticleController {
     private ArticleService articleService;
-    private TagsService tagsService;
+    private TagListService tagListService;
     @Autowired
-    public ArticleController(ArticleService articleService, TagsService tagsService) {
+    public ArticleController(ArticleService articleService, TagListService tagListService) {
         this.articleService = articleService;
-        this.tagsService = tagsService;
+        this.tagListService = tagListService;
     }
 
     /**
@@ -33,7 +33,7 @@ public class ArticleController {
      */
     @PostMapping
     public Integer saveArticle(Article article, @RequestParam("tagsInput")String tags){
-        List<Tag> tagList = tagsService.saveTags(tags);
+        List<Tag> tagList = tagListService.saveTags(tags);
         return articleService.saveArticle(article,tagList);
     }
 
@@ -46,7 +46,9 @@ public class ArticleController {
      */
     @GetMapping("/{articleId}")
     public Article modifyArticle(@PathVariable Integer articleId) {
-        return articleService.findArticleById(articleId);
+        Article article = articleService.findArticleById(articleId);
+        article.setTags(tagListService.getArticleTags(articleId));
+        return article;
     }
 
     /**

@@ -8,7 +8,6 @@ import edu.rorke.blog.background.management.entity.dto.ArticleDto;
 import edu.rorke.blog.background.management.repository.ArticleAndTagDao;
 import edu.rorke.blog.background.management.repository.ArticleDao;
 import edu.rorke.blog.background.management.repository.TagDao;
-import edu.rorke.blog.background.management.error.NoSuchArticleException;
 import org.springframework.data.domain.Page;
 
 import java.util.*;
@@ -89,13 +88,9 @@ public class ArticleUtil {
         return articleAndTagDao.saveAll(atList);
     }
 
-    public static Article findArticleById(ArticleDao dao, Integer id) throws NoSuchArticleException {
+    public static Article findArticleById(ArticleDao dao, Integer id){
         Optional<Article> nullableResult = dao.findById(id);
-        if (nullableResult.isPresent()) {
-            return nullableResult.get();
-        } else {
-            throw new NoSuchArticleException("文章不存在");
-        }
+        return nullableResult.orElse(null);
     }
 
     public static List<ArticleDto> convertArticleToDto(Page<Article> articles){

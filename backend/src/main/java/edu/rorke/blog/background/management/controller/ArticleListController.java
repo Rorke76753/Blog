@@ -24,8 +24,8 @@ public class ArticleListController {
     }
 
     @GetMapping
-    public List<Article> allArticleList(){
-        return articleListService.getArticleList();
+    public Page<ArticleDto> paginationArticleList(){
+        return paginationArticleList(0,10);
     }
 
     /**
@@ -36,7 +36,7 @@ public class ArticleListController {
      */
     @GetMapping("/page={page}&limit={limit}")
     public Page<ArticleDto> paginationArticleList(@PathVariable int page, @PathVariable int limit){
-       return articleListService.getBriefArticleListWithPagination(page,limit);
+       return articleListService.getBriefArticlePaginationList(page,limit);
     }
 
     @GetMapping("/searchTitle={title}&page={page}&limit={limit}")
@@ -44,7 +44,7 @@ public class ArticleListController {
                                                    @PathVariable int page,
                                                    @PathVariable int limit){
         title = "%"+title+"%";
-        return articleListService.findArticleByTitle(title,page,limit);
+        return articleListService.getBriefArticlePaginationListByTitle(title,page,limit);
     }
 
     @DeleteMapping

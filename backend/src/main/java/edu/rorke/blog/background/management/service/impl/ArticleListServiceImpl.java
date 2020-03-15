@@ -27,13 +27,13 @@ public class ArticleListServiceImpl implements ArticleListService {
     }
 
     @Override
-    public Page<Article> getArticleListWithPagination(Integer page,Integer limit) {
+    public Page<Article> getArticlePaginationList(Integer page, Integer limit) {
         return articleDao.findAll(PaginationUtil.defaultPageRequest(page, limit));
     }
 
     @Override
-    public Page<ArticleDto> getBriefArticleListWithPagination(Integer page,Integer limit) {
-        Page<Article> articles = getArticleListWithPagination(page, limit);
+    public Page<ArticleDto> getBriefArticlePaginationList(Integer page, Integer limit) {
+        Page<Article> articles = getArticlePaginationList(page, limit);
         List<ArticleDto> dtoList = ArticleUtil.convertArticleToDto(articles);
         return new PageImpl<>(dtoList);
     }
@@ -53,7 +53,7 @@ public class ArticleListServiceImpl implements ArticleListService {
     }
 
     @Override
-    public Page<ArticleDto> findArticleByTitle(String title, int page, int limit) {
+    public Page<ArticleDto> getBriefArticlePaginationListByTitle(String title, int page, int limit) {
         Page<Article> articles = articleDao.findByTitleLike(title, PaginationUtil.defaultPageRequest(page, limit));
         List<ArticleDto> dtoList = ArticleUtil.convertArticleToDto(articles);
         return new PageImpl<>(dtoList);
