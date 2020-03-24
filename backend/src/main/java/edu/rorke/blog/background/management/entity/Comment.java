@@ -25,5 +25,6 @@ public class Comment {
     private String username;
     private String emailAddress;
     private Date publishDate;
-    private int deleted;
+    private int show;
+    private int likeNum;
 }

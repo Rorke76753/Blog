@@ -1,4 +1,4 @@
-package edu.rorke.blog.background.management.service.impl.util;
+package edu.rorke.blog.background.management.util;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;

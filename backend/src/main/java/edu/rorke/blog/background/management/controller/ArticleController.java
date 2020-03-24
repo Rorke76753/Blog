@@ -7,6 +7,8 @@ import edu.rorke.blog.background.management.service.TagListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -18,6 +20,7 @@ import java.util.List;
 public class ArticleController {
     private ArticleService articleService;
     private TagListService tagListService;
+
     @Autowired
     public ArticleController(ArticleService articleService, TagListService tagListService) {
         this.articleService = articleService;
@@ -27,22 +30,24 @@ public class ArticleController {
     /**
      * checked
      * 保存新编写的文章
+     *
      * @param article 文章，表单提交
      * @param tags    标签，表单提交
-     * @return        保存是否成功
+     * @return 保存是否成功
      */
     @PostMapping
-    public Integer saveArticle(Article article, @RequestParam("tagsInput")String tags){
+    public Integer saveArticle(Article article, @RequestParam("tagsInput") String tags) {
         List<Tag> tagList = tagListService.saveTags(tags);
-        return articleService.saveArticle(article,tagList);
+        return articleService.saveArticle(article, tagList);
     }
 
     /**
      * checked
      * 获得id为articleId的文章，并填充入编写文章的表单中
      * 防止通过uri访问导致404
+     *
      * @param articleId 文章id
-     * @return          文章
+     * @return 文章
      */
     @GetMapping("/{articleId}")
     public Article modifyArticle(@PathVariable Integer articleId) {
@@ -55,27 +60,29 @@ public class ArticleController {
      * checked
      * 文章修改的保存，避免article的id是空，这里再作保险地设置了文章的id
      * 具体调用 saveArticle 方法
+     *
      * @param articleId 文章id
      * @param article   文章，表单提交
      * @param tags      标签，表单提交
-     * @return          保存是否成功
+     * @return 保存是否成功
      */
     @PutMapping("/{articleId}")
     public Integer updateArticle(@PathVariable Integer articleId,
                                  Article article,
-                                 @RequestParam("tagsInput")String tags){
+                                 @RequestParam("tagsInput") String tags) {
         article.setId(articleId);
-        return saveArticle(article,tags);
+        return saveArticle(article, tags);
     }
 
     /**
      * checked
      * 删除文章
+     *
      * @param articleId 文章id
-     * @return  删除是否成功
+     * @return 删除是否成功
      */
     @DeleteMapping("/{articleId}")
-    public Boolean deleteArticle(@PathVariable Integer articleId){
+    public Boolean deleteArticle(@PathVariable Integer articleId) {
         articleService.deleteArticle(articleId);
         return true;
     }

@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 /**
  * @author Rorke
@@ -14,25 +16,30 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/tags")
 public class TagListController {
-    private TagListService tagListService;
+    private TagListService service;
 
     @Autowired
-    public TagListController(TagListService tagListService) {
-        this.tagListService = tagListService;
+    public TagListController(TagListService service) {
+        this.service = service;
     }
 
     @GetMapping("/page={page}&limit={limit}")
     public Page<Tag> paginationTagList(@PathVariable int page,@PathVariable int limit){
-        return tagListService.getTagPaginationList(page,limit);
+        return service.getTagPaginationList(page,limit);
     }
 
     @PutMapping("/{tagId}")
     public Boolean saveTag(@PathVariable int tagId,String content){
-        return tagListService.saveOneTag(tagId,content);
+        return service.saveOneTag(tagId,content);
     }
 
     @DeleteMapping("/{tagId}")
     public Boolean deleteTag(@PathVariable int tagId){
-        return tagListService.deleteTag(tagId);
+        return service.deleteTag(tagId);
+    }
+
+    @DeleteMapping
+    public Boolean deleteTags(@RequestParam List<Integer> tags){
+        return service.deleteTags(tags);
     }
 }

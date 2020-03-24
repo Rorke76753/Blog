@@ -1,4 +1,4 @@
-package edu.rorke.blog.background.management.service.impl.util;
+package edu.rorke.blog.background.management.util;
 
 import edu.rorke.blog.background.management.entity.Article;
 import edu.rorke.blog.background.management.entity.Tag;

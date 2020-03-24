@@ -16,4 +16,18 @@ public interface CommentListService {
      * @return  评论的分页列表
      */
     Page<Comment> getCommentPaginationList(Integer articleId, Integer page, Integer limit);
+
+    /**
+     * 删除id为commentId的评论
+     * @param commentId 评论id
+     * @return
+     */
+    Boolean deleteComment(Integer commentId);
+
+    /**
+     * 是否显示评论，只要调用这个方法，显示的状态会取反
+     * @param commentId 评论id
+     * @return          评论不存在的时候会抛出异常，存在的时候永远为true
+     */
+    Boolean showComment(Integer commentId);
 }

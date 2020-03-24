@@ -4,14 +4,16 @@ import edu.rorke.blog.background.management.entity.Article;
 import edu.rorke.blog.background.management.entity.dto.ArticleDto;
 import edu.rorke.blog.background.management.repository.ArticleDao;
 import edu.rorke.blog.background.management.service.ArticleListService;
-import edu.rorke.blog.background.management.service.impl.util.ArticleUtil;
-import edu.rorke.blog.background.management.service.impl.util.PaginationUtil;
+import edu.rorke.blog.background.management.util.ArticleUtil;
+import edu.rorke.blog.background.management.util.PaginationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 /**
  * @author Rorke
@@ -35,7 +37,7 @@ public class ArticleListServiceImpl implements ArticleListService {
     public Page<ArticleDto> getBriefArticlePaginationList(Integer page, Integer limit) {
         Page<Article> articles = getArticlePaginationList(page, limit);
         List<ArticleDto> dtoList = ArticleUtil.convertArticleToDto(articles);
-        return new PageImpl<>(dtoList);
+        return new PageImpl<>(dtoList,articles.getPageable(),articles.getTotalElements());
     }
 
     @Override

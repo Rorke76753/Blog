@@ -5,7 +5,7 @@ import edu.rorke.blog.background.management.entity.Tag;
 import edu.rorke.blog.background.management.repository.ArticleAndTagDao;
 import edu.rorke.blog.background.management.repository.ArticleDao;
 import edu.rorke.blog.background.management.service.ArticleService;
-import edu.rorke.blog.background.management.service.impl.util.ArticleUtil;
+import edu.rorke.blog.background.management.util.ArticleUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

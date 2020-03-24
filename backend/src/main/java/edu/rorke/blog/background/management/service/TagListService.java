@@ -45,4 +45,11 @@ public interface TagListService {
      * @return  删除结果
      */
     Boolean deleteTag(int tagId);
+
+    /**
+     * 后台选中多个并删除
+     * @param tags 标签id列表
+     * @return     删除情况
+     */
+    Boolean deleteTags(List<Integer> tags);
 }

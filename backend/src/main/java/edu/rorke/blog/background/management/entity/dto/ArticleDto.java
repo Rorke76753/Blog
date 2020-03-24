@@ -15,7 +15,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ArticleDto {
+public class ArticleDto{
     @Id
     private int id;
     private String title;

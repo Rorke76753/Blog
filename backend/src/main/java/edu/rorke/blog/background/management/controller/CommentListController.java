@@ -4,10 +4,7 @@ import edu.rorke.blog.background.management.entity.Comment;
 import edu.rorke.blog.background.management.service.CommentListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author Rorke
@@ -33,5 +30,20 @@ public class CommentListController {
                                                @PathVariable Integer page,
                                                @PathVariable Integer limit){
         return service.getCommentPaginationList(articleId,page,limit);
+    }
+
+    @PutMapping("/{commentId}")
+    public Boolean showComment(@PathVariable Integer commentId){
+        return service.showComment(commentId);
+    }
+
+    /**
+     * 真删除
+     * @param commentId 评论id
+     * @return          删除结果
+     */
+    @DeleteMapping("/{commentId}")
+    public Boolean deleteComment(@PathVariable Integer commentId){
+        return service.deleteComment(commentId);
     }
 }

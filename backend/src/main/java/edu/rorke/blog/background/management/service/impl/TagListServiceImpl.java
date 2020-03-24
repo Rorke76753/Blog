@@ -5,8 +5,8 @@ import edu.rorke.blog.background.management.entity.Tag;
 import edu.rorke.blog.background.management.repository.ArticleAndTagDao;
 import edu.rorke.blog.background.management.repository.TagDao;
 import edu.rorke.blog.background.management.service.TagListService;
-import edu.rorke.blog.background.management.service.impl.util.ArticleUtil;
-import edu.rorke.blog.background.management.service.impl.util.PaginationUtil;
+import edu.rorke.blog.background.management.util.ArticleUtil;
+import edu.rorke.blog.background.management.util.PaginationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -73,6 +73,14 @@ public class TagListServiceImpl implements TagListService {
     public Boolean deleteTag(int tagId) {
         Optional<Tag> tag = tagDao.findById(tagId);
         tag.ifPresent(tag1 -> {tagDao.delete(tag1);});
+        return true;
+    }
+
+    @Override
+    public Boolean deleteTags(List<Integer> tags) {
+        for (Integer i : tags) {
+            deleteTag(i);
+        }
         return true;
     }
 }
