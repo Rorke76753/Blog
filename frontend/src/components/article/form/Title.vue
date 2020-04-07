@@ -3,7 +3,6 @@
     v-model="title"
     placeholder="标题"
     clearable
-
     maxlength="30"
     show-word-limit
   ></el-input>
@@ -21,7 +20,7 @@ export default {
 </script>
 
 <style scoped>
-  .el-input{
-    width: 290px
-  }
+.el-input {
+  width: 290px;
+}
 </style>

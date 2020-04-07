@@ -1,37 +1,28 @@
 package edu.rorke.blog.background.management.entity.dto;
 
-import edu.rorke.blog.background.management.entity.Article;
+import edu.rorke.blog.background.management.entity.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
+import java.util.List;
 
 /**
  * @author Rorke
- * @date 2020/3/13 10:52
+ * @date 2020/4/6 21:02
  */
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class ArticleDto{
-    @Id
-    private int id;
+@NoArgsConstructor
+public class ArticleDto {
+    private int articleId;
     private String title;
     private String description;
-    private String attribute;
-    private int top;
-    private Date publishDate;
-    private Date lastUpdate;
-
-    public ArticleDto(Article article) {
-        this.id = article.getId();
-        this.title = article.getTitle();
-        this.description = article.getDescription();
-        this.top = article.getTop();
-        this.publishDate = article.getPublishDate();
-        this.lastUpdate = article.getLastUpdate();
-        this.attribute = article.getAttribute();
-    }
+    private LocalDate publishDate;
+    private String articleContent;
+    private int attributeId;
+    private List<Tag> tagList;
+    private int clickNum;
+    private int likeNum;
+    private int commentNum;
 }

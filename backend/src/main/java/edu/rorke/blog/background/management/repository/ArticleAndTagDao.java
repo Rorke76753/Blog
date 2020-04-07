@@ -1,29 +1,28 @@
 package edu.rorke.blog.background.management.repository;
 
 import edu.rorke.blog.background.management.entity.ArticleAndTag;
-import edu.rorke.blog.background.management.entity.EmbeddedArticleAndTagKey;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-
 /**
  * @author Rorke
+ * @date 2020/4/6 22:13
  */
 @Repository
-public interface ArticleAndTagDao extends JpaRepository<ArticleAndTag, EmbeddedArticleAndTagKey> {
+public interface ArticleAndTagDao extends JpaRepository<ArticleAndTag,Integer> {
     /**
-     * 根据文章寻找对应的所有标签
+     * 根据文章id寻找文章与标签的链接
      * @param articleId 文章id
-     * @return          文章与标签的关系
+     * @return  文章id与标签的链接
      */
-    List<ArticleAndTag> findByEmbeddedArticleId(Integer articleId);
+    List<ArticleAndTag> findAllByArticleId(int articleId);
 
     /**
-     * 根据标签寻找对应的文章
+     * 根据文章和标签id删除
+     * @param articleId 文章id
      * @param tagId 标签id
-     * @return      文章与标签的关系
      */
-    List<ArticleAndTag> findByEmbeddedTagId(Integer tagId);
+    void deleteByArticleIdAndTagId(int articleId,int tagId);
 }

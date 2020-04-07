@@ -1,46 +1,58 @@
 package edu.rorke.blog.background.management.service.impl;
 
-import edu.rorke.blog.background.management.entity.Article;
-import edu.rorke.blog.background.management.entity.Tag;
-import edu.rorke.blog.background.management.repository.ArticleAndTagDao;
-import edu.rorke.blog.background.management.repository.ArticleDao;
+import edu.rorke.blog.background.management.entity.ArticleContent;
+import edu.rorke.blog.background.management.entity.ArticleInfo;
+import edu.rorke.blog.background.management.entity.Attribute;
+import edu.rorke.blog.background.management.repository.ArticleContentDao;
+import edu.rorke.blog.background.management.repository.ArticleInfoDao;
+import edu.rorke.blog.background.management.repository.AttributeDao;
 import edu.rorke.blog.background.management.service.ArticleService;
 import edu.rorke.blog.background.management.util.ArticleUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Optional;
 
 /**
  * @author Rorke
- * @date 2020/3/7 13:33
+ * @date 2020/4/6 15:32
  */
 @Service
 public class ArticleServiceImpl implements ArticleService {
-    private ArticleDao articleDao;
-    private ArticleAndTagDao articleAndTagDao;
+    private ArticleInfoDao articleInfoDao;
+    private ArticleContentDao articleContentDao;
+    private AttributeDao attributeDao;
+    private ArticleUtil articleUtil;
 
     @Autowired
-    public ArticleServiceImpl(ArticleDao articleDao,ArticleAndTagDao articleAndTagDao) {
-        this.articleDao = articleDao;
-        this.articleAndTagDao = articleAndTagDao;
+    public ArticleServiceImpl(ArticleUtil articleUtil,
+                              AttributeDao attributeDao,
+                              ArticleInfoDao articleInfoDao,
+                              ArticleContentDao articleContentDao) {
+        this.articleUtil = articleUtil;
+        this.attributeDao = attributeDao;
+        this.articleInfoDao = articleInfoDao;
+        this.articleContentDao = articleContentDao;
+
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public Article findArticleById(Integer articleId) {
-        return ArticleUtil.findArticleById(articleDao,articleId);
+    public Boolean saveNewArticle(ArticleInfo articleInfo, ArticleContent articleContent) {
+        int id = saveNewArticleInfo(articleInfo);
+        articleContent.setArticleId(id);
+        articleUtil.saveTags(id,articleInfo.getTagList());
+        articleUtil.modifyAttributeRelativeNum(articleInfo.getAttributeId());
+        return saveNewArticleContent(articleContent);
     }
 
-    @Override
-    public Integer saveArticle(Article article,List<Tag> tagList) {
-        Integer articleId = ArticleUtil.getArticleIdBySaving(article,articleDao);
-        return ArticleUtil.saveArticleAndTag(articleAndTagDao,articleId,tagList).size();
+    private Integer saveNewArticleInfo(ArticleInfo articleInfo){
+        return articleInfoDao.save(articleInfo).getArticleId();
     }
 
-    @Override
-    public Boolean deleteArticle(Integer id){
-        Article article = findArticleById(id);
-        articleDao.delete(article);
+    private Boolean saveNewArticleContent(ArticleContent articleContent){
+        articleContentDao.save(articleContent);
         return true;
     }
 }

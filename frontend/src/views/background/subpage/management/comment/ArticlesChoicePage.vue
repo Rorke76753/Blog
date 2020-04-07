@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import ArticleChoiceTable from "../../../../../components/table/comment/ArticleChoiceTable";
+import ArticleChoiceTable from "../../../../../components/table/management/comment/ArticleChoiceTable";
 import Pagination from "../../../../../components/table/Pagination";
 
 export default {

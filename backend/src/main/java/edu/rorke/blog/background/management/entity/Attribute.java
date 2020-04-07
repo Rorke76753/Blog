@@ -1,7 +1,6 @@
 package edu.rorke.blog.background.management.entity;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,20 +8,17 @@ import javax.persistence.*;
 
 /**
  * @author Rorke
- * @date 2020/4/6 15:24
+ * @date 2020/4/6 14:09
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Builder
-@Table(name = "tb_article_tag")
-public class ArticleAndTag {
+@Table(name = "tb_attribute")
+public class Attribute {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int atId;
-    @Column(name = "article_id")
-    private int articleId;
-    @Column(name = "tag_id")
-    private int tagId;
+    private int attributeId;
+    private String attributeName;
+    private int relativeNum;
 }

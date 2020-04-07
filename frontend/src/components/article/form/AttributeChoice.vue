@@ -1,9 +1,6 @@
 <template>
   <div>
-    <el-select
-      placeholder="文章类型"
-      v-model="selectValue"
-    >
+    <el-select placeholder="文章类型" v-model="selectValue">
       <el-option
         v-for="attribute in articleKind"
         :key="attribute.value"
@@ -36,7 +33,7 @@ export default {
 </script>
 
 <style scoped>
-  .el-select{
-    width: 290px
-  }
+.el-select {
+  width: 290px;
+}
 </style>

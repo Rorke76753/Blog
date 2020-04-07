@@ -1,5 +1,5 @@
 <template>
-  <div class = "holdHeight">
+  <div class="holdHeight">
     <el-row type="flex"></el-row>
     <el-tag
       :key="tag"
@@ -106,7 +106,7 @@ export default {
   padding-left: 30px;
   font-size: 20px;
 }
-  .holdHeight{
-    height: 40px;
-  }
+.holdHeight {
+  height: 40px;
+}
 </style>

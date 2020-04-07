@@ -1,10 +1,10 @@
 <template>
   <div>
-    <a href="/">
+    <router-link to="/">
       <el-button type="success" class="formStyle" @click="setActivePath"
-      >返回首页</el-button
+        >返回首页</el-button
       >
-    </a>
+    </router-link>
     <TagTable></TagTable>
     <el-row style="padding-top: 10px;display: flex;justify-content: start">
       <el-col><Pagination></Pagination></el-col>
@@ -21,14 +21,14 @@
 </template>
 
 <script>
-import TagTable from "../../../../../components/table/tag/TagTable";
+import TagTable from "../../../../../components/table/management/tag/TagTable";
 import Pagination from "../../../../../components/table/Pagination";
 
 export default {
   name: "TagManagementPage",
   components: {
     TagTable,
-      Pagination
+    Pagination
   }
 };
 </script>
