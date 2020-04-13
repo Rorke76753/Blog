@@ -15,49 +15,50 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: "/",
-    redirect: "/homepage",
+    redirect: "/admin/homepage",
     component: Admin,
     children: [
       {
-        path: "/homepage",
+        path: "/admin/homepage",
         component: Home
       },
       {
-        path: "/articles",
+        path: "/admin/articles",
         name: "文章管理",
         component: ArticleListPage
       },
       {
-        path: "/article/:articleId",
+        path: "/admin/article",
+        name: "ArticleManagementPage",
         component: ArticleManagementPage
       },
       {
-        path: "/tags",
+        path: "/admin/tags",
         name: "标签管理",
         component: TagManagementPage
       },
       {
-        path: "/comments",
+        path: "/admin/comments",
         name: "文章选择",
         component: ArticlesChoicePage
       },
       {
-        path: "/comments/:articleId",
+        path: "/admin/comments/:articleId",
         name: "评论管理",
         component: CommentManagementPage
       },
       {
-        path: "/operationLog",
+        path: "/admin/operationLog",
         name: "操作日志",
         component: OperationLog
       },
       {
-        path: "/loginLog",
+        path: "/admin/loginLog",
         name: "登录日志",
         component: LoginLog
       },
       {
-        path: "/writeArticle",
+        path: "/admin/writeArticle",
         name: "写文章",
         component: WriteArticlePage
       }

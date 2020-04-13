@@ -15,204 +15,92 @@
     </div>
     <!--    <CoverUploader></CoverUploader>-->
     <!--    <el-divider></el-divider>-->
-
-    <el-row type="flex" class="formStyle">
-      <el-col :span="1"><p class="descriptionStyle">文章类型</p></el-col>
-      <el-select
-        placeholder="文章类型"
-        v-model="selectValue.attributeName"
-        @change="selectAttribute"
-      >
-        <el-option
-          v-for="attribute in articleAttribute"
-          :key="attribute.attributeId"
-          :label="attribute.attributeName"
-          :value="attribute"
-          class="attributeChoice"
-        ></el-option>
-      </el-select>
-    </el-row>
-    <el-row type="flex" class="formStyle">
-      <el-col :span="1"><p class="descriptionStyle">文章标题</p></el-col>
-      <el-input
-        v-model="title"
-        placeholder="标题"
-        clearable
-        maxlength="30"
-        show-word-limit
-        class="titleInput"
-      ></el-input>
-    </el-row>
-
-    <el-row type="flex" class="formStyle">
-      <el-col :span="1"><p class="descriptionStyle">文章描述</p></el-col>
-      <el-input
-        v-model="description"
-        placeholder="文章描述，若不填写则自动选择文章前50个字为文章描述"
-        clearable
-        maxlength="50"
-        show-word-limit
-        class="descriptionInput"
-      ></el-input>
-    </el-row>
-
-    <el-row type="flex" class="formStyle holdHeight">
-      <el-col :span="1"><p class="descriptionStyle">文章标签</p></el-col>
-      <el-row type="flex"></el-row>
-      <el-tag
-        :key="tag.tagContent"
-        v-for="tag in dynamicTags"
-        closable
-        :disable-transitions="false"
-        @close="handleClose(tag)"
-      >
-        {{ tag.tagContent }}
-      </el-tag>
-      <el-input
-        class="input-new-tag"
-        v-if="inputVisible"
-        v-model="inputValue"
-        ref="saveTagInput"
-        size="small"
-        @keyup.enter.native="handleInputConfirm"
-        @blur="handleInputConfirm"
-        maxlength="10"
-        show-word-limit
-      >
-      </el-input>
-      <el-button
-        v-else-if="dynamicTags.length < 10"
-        class="button-new-tag"
-        size="small"
-        @click="showInput"
-        >+ New Tag
-      </el-button>
-      <span class="tagCount">{{ dynamicTags.length }}/10</span>
-    </el-row>
+    <el-form label-position="right" label-width="80px">
+      <el-form-item label="标签" class="formStyle holdHeight">
+        <el-row type="flex">
+          <tagsInput ref="tagsInput"></tagsInput>
+        </el-row>
+      </el-form-item>
+      <el-form-item label="标题" class="formStyle titleWidth" required>
+        <el-row type="flex">
+          <titleInput ref="titleInput"></titleInput>
+        </el-row>
+      </el-form-item>
+      <el-form-item label="文章描述" class="formStyle">
+        <el-row type="flex">
+          <descriptionInput ref="description"></descriptionInput>
+        </el-row>
+      </el-form-item>
+      <el-form-item label="选择属性" class="formStyle" required>
+        <el-row type="flex">
+          <attributeChoice ref="attributeChoice"></attributeChoice>
+        </el-row>
+      </el-form-item>
+    </el-form>
     <el-divider></el-divider>
-    <editor
-      :initial-value="editorText"
-      :options="editorOptions"
-      previewStyle="vertical"
-      height="700px"
-      mode="markdown"
-      name="articleContent"
-      ref="editor"
-    ></editor>
+    <editor ref="editor"></editor>
   </div>
 </template>
 
 <script>
-import Editor from "@toast-ui/vue-editor/src/Editor.vue";
-import "tui-editor/dist/tui-editor.css";
-import "tui-editor/dist/tui-editor-contents.css";
-import "codemirror/lib/codemirror.css";
+import ArticleEditor from "../../../components/article/ArticleEditor";
+import TagsInput from "../../../components/article/form/TagsInput";
+import Description from "../../../components/article/form/Description";
+import Title from "../../../components/article/form/Title";
+import AttributeChoice from "../../../components/article/form/AttributeChoice";
 import axios from "axios";
 export default {
   name: "ArticleManagementPage",
 
   components: {
-    editor: Editor
+    editor: ArticleEditor,
+    tagsInput: TagsInput,
+    descriptionInput: Description,
+    titleInput: Title,
+    attributeChoice: AttributeChoice
   },
   data() {
     return {
-
       title: "",
       description: "",
-
-      dynamicTags: [],
-      inputVisible: false,
-      inputValue: "",
-      tagsSet: new Set(),
-
-      editorText: "",
-      editorOptions: {
-        hideModeSwitch: false
-      },
-      articleAttribute: [],
-      selectValue: {
-        attributeName: "",
-        attributeId: ""
-      }
+      tags: [],
+      attribute: "",
+      article: "",
+      attributeList: []
     };
   },
   methods: {
-    getData() {
-      let requestUrl = axios.defaults.baseURL + "/attributes";
-      axios.get(requestUrl).then(res => {
-        if (res.status === 200) {
-          this.articleAttribute = res.data;
-        }
-      });
-    },
-
     setActivePath() {
-      window.sessionStorage.setItem("activePath", "/homepage");
-    },
-
-    handleClose(tag) {
-      this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
-    },
-
-    showInput() {
-      this.inputVisible = true;
-      this.$nextTick(_ => {
-        console.log(_);
-        this.$refs.saveTagInput.$refs.input.focus();
-      });
-    },
-
-    handleInputConfirm() {
-      let inputValue = this.inputValue;
-      console.log(inputValue);
-      if (inputValue) {
-        if (!this.tagsSet.has(inputValue)) {
-          this.tagsSet.add(inputValue);
-          let tag = {
-            id: 0,
-            tagContent: inputValue
-          };
-          this.dynamicTags.push(tag);
-        } else {
-          this.$message({
-            showClose: true,
-            message: "不允许添加重复标签",
-            type: "warning"
-          });
-        }
-      }
-      this.inputVisible = false;
-      this.inputValue = "";
-    },
-    selectAttribute(attribute){
-      this.selectValue = attribute;
+      window.sessionStorage.setItem("activePath", "/admin/homepage");
     },
 
     saveArticle() {
+      this.attribute = this.$refs.attributeChoice.getData();
+      this.title = this.$refs.titleInput.getData();
+      this.description = this.$refs.description.getData();
+      this.article = this.$refs.editor.getData();
+      this.tags = this.$refs.tagsInput.getData();
       let putUrl = axios.defaults.baseURL + "/article";
       axios
         .post(putUrl, {
           title: this.title,
           description: this.description,
-          attributeId: this.selectValue.attributeId,
-          articleContent: this.$refs.editor.invoke("getMarkdown"),
-          tagList: this.dynamicTags
+          attributeId: this.attribute,
+          articleContent: this.article,
+          tagList: this.tags
         })
         .then(res => {
           if (res.status === 200 && res.data !== 0) {
-            this.$router.push("/articles");
+            this.$router.push("/admin/articles");
           } else {
             this.$message({
               showClose: true,
-              message: "更新文章失败，请稍后再试",
+              message: "写文章，请稍后再试",
               type: "warning"
             });
           }
         });
     }
-  },
-  created() {
-    this.getData();
   }
 };
 </script>
@@ -221,44 +109,10 @@ export default {
 .formStyle {
   padding-top: 10px;
 }
-.descriptionStyle {
-  font-size: 14px;
-  align: left;
-  width: 65px;
-}
-
-.el-tag + .el-tag {
-  margin-left: 10px;
-}
-
-.button-new-tag {
-  margin-left: 10px;
-  height: 32px;
-  line-height: 30px;
-  padding-top: 0;
-  padding-bottom: 0;
-}
-
-.input-new-tag {
-  margin-left: 10px;
-  width: 190px;
-  vertical-align: bottom;
-}
-
-.tagCount {
-  padding-left: 30px;
-  font-size: 20px;
-}
 .holdHeight {
   height: 40px;
 }
-.attributeChoice {
-  width: 290px;
-}
-.titleInput {
-  width: 300px;
-}
-.descriptionInput {
-  width: 800px;
+.titleWidth {
+  width: 33%;
 }
 </style>

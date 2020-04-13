@@ -13,14 +13,22 @@ export default {
   name: "Title",
   data() {
     return {
-      title: ""
+      title:"",
     };
+  },
+  methods: {
+    setTitleInput(title){
+      this.title = title;
+    },
+    getData() {
+      return this.title;
+    }
   }
 };
 </script>
 
 <style scoped>
 .el-input {
-  width: 290px;
+  width: 100%;
 }
 </style>

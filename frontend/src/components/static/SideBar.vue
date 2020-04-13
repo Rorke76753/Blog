@@ -16,7 +16,7 @@
           <span slot="title">后台管理</span>
         </div>
       </el-menu-item>
-      <el-menu-item index="/homepage" v-on:click="saveActivePath('/homepage')">
+      <el-menu-item index="/admin/homepage" v-on:click="saveActivePath('/homepage')">
         <i class="el-icon-s-promotion"></i>
         <span slot="title">首页</span>
       </el-menu-item>
@@ -26,18 +26,18 @@
           <span slot="title">管理</span>
         </template>
         <el-menu-item
-          index="/articles"
+          index="/admin/articles"
           v-on:click="saveActivePath('/articles')"
         >
           <i class="el-icon-view"></i>
           <span slot="title">文章管理</span>
         </el-menu-item>
-        <el-menu-item index="/tags" v-on:click="saveActivePath('/tags')">
+        <el-menu-item index="/admin/tags" v-on:click="saveActivePath('/tags')">
           <i class="el-icon-collection-tag"></i>
           <span slot="title">标签管理</span>
         </el-menu-item>
         <el-menu-item
-          index="/comments"
+          index="/admin/comments"
           v-on:click="saveActivePath('/comments')"
         >
           <i class="el-icon-chat-dot-round"></i>
@@ -50,14 +50,14 @@
           <span slot="title">日志</span>
         </template>
         <el-menu-item
-          index="/operationLog"
+          index="/admin/operationLog"
           v-on:click="saveActivePath('/operationLog')"
         >
           <i class="el-icon-data-analysis"></i>
           <span slot="title">操作日志</span>
         </el-menu-item>
         <el-menu-item
-          index="/loginLog"
+          index="/admin/loginLog"
           v-on:click="saveActivePath('/loginLog')"
         >
           <i class="el-icon-time"></i>
@@ -65,7 +65,7 @@
         </el-menu-item>
       </el-submenu>
       <el-menu-item
-        index="/writeArticle"
+        index="/admin/writeArticle"
         v-on:click="saveActivePath('/writeArticle')"
       >
         <i class="el-icon-edit"></i>

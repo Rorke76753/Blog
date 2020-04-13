@@ -1,34 +1,82 @@
 <template>
   <div>
     <router-link to="/">
-      <el-button type="success" class="formStyle" @click="setActivePath"
+      <el-button type="success" class="formStyle"
         >返回首页</el-button
       >
     </router-link>
-    <TagTable></TagTable>
+    <TagTable ref="tagTable"></TagTable>
     <el-row style="padding-top: 10px;display: flex;justify-content: start">
-      <el-col><Pagination></Pagination></el-col>
       <el-col
-        ><el-button
-          style="width: 120px;height:100%;float: right"
-          type="danger"
-          icon="el-icon-delete"
-          >批量删除</el-button
-        ></el-col
-      >
+        ><div class="block">
+          <el-pagination
+            background
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            :current-page.sync="currentPage"
+            :page-sizes="pageSizes"
+            :page-size="pageSize"
+            layout="sizes, prev, pager, next"
+            :total="totalElements"
+          >
+          </el-pagination></div
+      ></el-col>
     </el-row>
   </div>
 </template>
 
 <script>
 import TagTable from "../../../../../components/table/management/tag/TagTable";
-import Pagination from "../../../../../components/table/Pagination";
-
+import axios from "axios";
 export default {
   name: "TagManagementPage",
   components: {
-    TagTable,
-    Pagination
+    TagTable
+  },
+  data() {
+    return {
+      pageSizes: [5, 10, 20, 50],
+      pageSize: 10,
+      currentPage: 1,
+      totalElements: 1,
+      tagList: []
+    };
+  },
+  methods: {
+    handleSizeChange(res) {
+      this.pageSize = res;
+      this.currentPage = 1;
+      this.initData();
+    },
+    handleCurrentChange(res) {
+      this.currentPage = res;
+      this.initData();
+    },
+
+    initData() {
+      let tagUrl = axios.defaults.baseURL + "/tags";
+      axios
+        .post(tagUrl, {
+          page: this.currentPage,
+          pageSize: this.pageSize
+        })
+        .then(res => {
+          this.tagList = res.data.content;
+          this.totalElements = res.data.totalElements;
+          this.currentPage = res.data.pageable.pageNumber + 1;
+        }).finally(()=>{
+          this.transferData();
+      });
+    },
+    transferData() {
+      this.$refs.tagTable.setData(this.tagList);
+    }
+  },
+  created() {
+    this.initData();
+  },
+  mounted() {
+    this.transferData();
   }
 };
 </script>

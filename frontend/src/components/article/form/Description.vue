@@ -13,14 +13,24 @@ export default {
   name: "Description",
   data() {
     return {
-      description: ""
+      description:""
     };
+  },
+  methods: {
+    setDescriptionInput(description){
+      this.description = description;
+    },
+    getData() {
+      return this.description;
+    }
   }
 };
 </script>
 
 <style scoped>
 .el-input {
-  width: 70%;
+  width: 47%;
+  font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
 }
 </style>

@@ -2,13 +2,14 @@
   <div class="holdHeight">
     <el-row type="flex"></el-row>
     <el-tag
-      :key="tag"
+      :key="tag.tagId"
       v-for="tag in dynamicTags"
       closable
       :disable-transitions="false"
       @close="handleClose(tag)"
+      effect="plain"
     >
-      {{ tag }}
+      {{ tag.tagContent }}
     </el-tag>
     <el-input
       class="input-new-tag"
@@ -27,7 +28,6 @@
       class="button-new-tag"
       size="small"
       @click="showInput"
-      align="center"
       >+ New Tag
     </el-button>
     <span class="tagCount">{{ dynamicTags.length }}/10</span>
@@ -39,21 +39,28 @@ export default {
   name: "TagsInput",
   data() {
     return {
-      dynamicTags: [],
+      dynamicTags:[],
       inputVisible: false,
       inputValue: "",
       tagsSet: new Set()
     };
   },
   methods: {
+
+    initTagsSet(){
+      for (let i = 0; i < this.dynamicTags.length; i++) {
+        this.tagsSet.add(this.dynamicTags[i].tagContent);
+      }
+    },
+
     handleClose(tag) {
+      this.tagsSet.delete(tag.tagContent);
       this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1);
     },
 
     showInput() {
       this.inputVisible = true;
-      this.$nextTick(_ => {
-        console.log(_);
+      this.$nextTick(() => {
         this.$refs.saveTagInput.$refs.input.focus();
       });
     },
@@ -63,7 +70,11 @@ export default {
       if (inputValue) {
         if (!this.tagsSet.has(inputValue)) {
           this.tagsSet.add(inputValue);
-          this.dynamicTags.push(inputValue);
+          let tag = {
+            id: 0,
+            tagContent: inputValue
+          };
+          this.dynamicTags.push(tag);
         } else {
           this.tagWarning();
         }
@@ -78,7 +89,19 @@ export default {
         message: "不允许添加重复标签",
         type: "warning"
       });
+    },
+
+    setTagsInput(tagList){
+      this.dynamicTags = tagList;
+      this.initTagsSet();
+    },
+
+    getData() {
+      return this.dynamicTags;
     }
+  },
+  mounted() {
+    this.initTagsSet();
   }
 };
 </script>
