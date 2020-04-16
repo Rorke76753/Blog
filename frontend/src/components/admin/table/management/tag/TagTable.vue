@@ -9,6 +9,7 @@
     >
       <el-table-column prop="tagId" label="标签id" width="65"></el-table-column>
       <el-table-column
+              sortable
         prop="relativeNum"
         label="相关文章数"
         width="400"

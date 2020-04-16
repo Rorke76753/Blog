@@ -8,8 +8,8 @@
 </template>
 
 <script>
-import ArticleChoiceTable from "../../../../../components/table/management/comment/ArticleChoiceTable";
-import Pagination from "../../../../../components/table/Pagination";
+import ArticleChoiceTable from "../../../../components/admin/table/management/comment/ArticleChoiceTable";
+import Pagination from "../../../../components/admin/table/Pagination";
 
 export default {
   name: "CommentManagementPage",

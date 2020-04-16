@@ -146,6 +146,7 @@ public class ArticleUtil {
     public static void setAttributeName(ArticleInfo info,AttributeDao attributeDao) {
         if(attributeMap==null){
             List<Attribute> list = attributeDao.findAll();
+            attributeMap = new HashMap<>(3);
             for (Attribute attribute:list) {
                 attributeMap.put(attribute.getAttributeId(),attribute.getAttributeName());
             }

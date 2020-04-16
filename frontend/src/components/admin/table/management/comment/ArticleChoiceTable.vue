@@ -29,7 +29,7 @@
       ></el-table-column>
       <el-table-column prop="title" label="文章标题" width="250">
         <template>
-          <router-link to="/comments/1">{{ tableData[0].title }}</router-link>
+          <router-link to="/admin/comments/1">{{ tableData[0].title }}</router-link>
         </template>
       </el-table-column>
       <el-table-column prop="description" label="文章描述"></el-table-column>

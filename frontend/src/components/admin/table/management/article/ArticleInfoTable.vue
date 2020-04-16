@@ -14,7 +14,6 @@
         prop="articleId"
         label="文章id"
         width="65"
-        v-if="operated"
       ></el-table-column>
       <el-table-column
         prop="title"
@@ -22,7 +21,7 @@
         width="440"
         fixed
       ></el-table-column>
-      <el-table-column prop="attributeName" label="文章属性" width="100" v-if="operated">
+      <el-table-column prop="attributeName" label="文章属性" width="100" >
       </el-table-column>
       <el-table-column
         prop="description"
@@ -124,7 +123,7 @@ export default {
     deleteArticle(index, articleId, articleTitle) {
       let _this = this;
       let confirmMessage = "是否删除文章：" + articleTitle;
-      let deleteUrl = axios.defaults.baseURL + "/article/" + articleId;
+      let deleteUrl = axios.defaults.baseURL + "/articleInfo/" + articleId;
       this.$confirm(confirmMessage, "确认删除文章", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",

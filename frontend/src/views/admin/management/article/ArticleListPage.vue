@@ -68,9 +68,9 @@
 </template>
 
 <script>
-import Title from "../../../../../components/article/form/Title";
-import AttributeChoice from "../../../../../components/article/form/AttributeChoice";
-import ArticleTable from "../../../../../components/table/management/article/ArticleInfoTable";
+import Title from "../../../../components/admin/article/form/Title";
+import AttributeChoice from "../../../../components/admin/article/form/AttributeChoice";
+import ArticleTable from "../../../../components/admin/table/management/article/ArticleInfoTable";
 import axios from "axios";
 export default {
   name: "ArticleManagementPage",

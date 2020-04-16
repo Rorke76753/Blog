@@ -13,15 +13,14 @@
 </template>
 
 <script>
-  import Editor from "@toast-ui/vue-editor/src/Editor.vue";
-  import "tui-editor/dist/tui-editor.css";
-  import "tui-editor/dist/tui-editor-contents.css";
-  import "codemirror/lib/codemirror.css";
+import Editor from "@toast-ui/vue-editor/src/Editor.vue";
+import "tui-editor/dist/tui-editor.css";
+import "tui-editor/dist/tui-editor-contents.css";
+import "codemirror/lib/codemirror.css";
 export default {
-
   name: "ArticleEditor",
-  components:{
-    editor:Editor
+  components: {
+    editor: Editor
   },
 
   data() {
@@ -38,8 +37,8 @@ export default {
     getData() {
       return this.$refs.editor.invoke("getMarkdown");
     },
-    setData(articleContent){
-      this.$refs.editor.invoke("setMarkdown",articleContent);
+    setData(articleContent) {
+      this.$refs.editor.invoke("setMarkdown", articleContent);
     }
   }
 };

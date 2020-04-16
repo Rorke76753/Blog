@@ -1,6 +1,6 @@
 <template>
   <div>
-    <OperationTable></OperationTable>
+    <CommentTable></CommentTable>
     <el-row style="padding-top: 10px;display: flex;justify-content: start">
       <el-col><Pagination></Pagination></el-col>
       <el-col
@@ -16,14 +16,14 @@
 </template>
 
 <script>
-import OperationTable from "../../../../components/table/log/OperationTable";
-import Pagination from "../../../../components/table/Pagination";
+import Pagination from "../../../../components/admin/table/Pagination";
+import CommentTable from "../../../../components/admin/table/management/comment/CommentTable";
 
 export default {
-  name: "OperationLog",
+  name: "CommentManagementPage",
   components: {
-    OperationTable,
-    Pagination
+    Pagination,
+    CommentTable
   }
 };
 </script>

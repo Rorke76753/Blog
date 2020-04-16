@@ -25,27 +25,21 @@ public class ArticlesController {
         this.articlesService = articlesService;
     }
 
-    @Deprecated
-    @GetMapping
-    public Page<ArticleInfo> getPaginationArticleInfo(@RequestParam("page")int page, @RequestParam("pageSize")int pageSize){
-        return articlesService.getPaginationArticleInfo(page, pageSize);
-    }
-
     @DeleteMapping
     public Integer[] deleteMultipleArticles(@RequestParam Integer[] articleIds){
-        System.out.println(Arrays.toString(articleIds));
         return articlesService.deleteMultipleById(articleIds);
     }
 
     @PostMapping("/searching")
     public Page<ArticleInfo> getPaginationArticleInfoWithDynamicSearch(@RequestBody ArticleDynamicSearch articleDynamicSearch){
         String title = articleDynamicSearch.getTitle();
-        int attributeId = articleDynamicSearch.getAttributeId();
+        Integer attributeId = articleDynamicSearch.getAttributeId();
         LocalDate startDate = articleDynamicSearch.getStartDate();
         LocalDate endDate = articleDynamicSearch.getEndDate();
-        int page = articleDynamicSearch.getPage();
-        int pageSize = articleDynamicSearch.getPageSize();
-        return  articlesService.dynamicSearch(title,attributeId,startDate,endDate,page,pageSize);
+        Integer page = articleDynamicSearch.getPage();
+        Integer pageSize = articleDynamicSearch.getPageSize();
+        String orderBy = articleDynamicSearch.getOrderBy();
+        return  articlesService.dynamicSearch(title,attributeId,startDate,endDate,page,pageSize,orderBy);
     }
 }
 

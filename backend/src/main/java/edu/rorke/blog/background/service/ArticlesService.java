@@ -10,14 +10,6 @@ import java.time.LocalDate;
  * @date 2020/4/6 13:53
  */
 public interface ArticlesService {
-    /**
-     * 分页获得文章列表
-     * @param page  页数
-     * @param pageSize  每一页的大小
-     * @return  文章dto分页列表
-     */
-    @Deprecated
-    Page<ArticleInfo> getPaginationArticleInfo(int page, int pageSize);
 
     /**
      * 多删除
@@ -34,8 +26,8 @@ public interface ArticlesService {
      * @param endDate 结束日期
      * @param page 页数
      * @param pageSize 页面大小
+     * @param orderBy
      * @return 分页结果
      */
-    Page<ArticleInfo> dynamicSearch(String title, int attributeId, LocalDate startDate, LocalDate endDate, int page, int pageSize);
-
+    Page<ArticleInfo> dynamicSearch(String title, Integer attributeId, LocalDate startDate, LocalDate endDate, int page, int pageSize, String orderBy);
 }

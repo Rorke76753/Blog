@@ -36,15 +36,6 @@ public class ArticlesServiceImpl implements ArticlesService {
         this.attributeDao = attributeDao;
     }
 
-    @Override
-    public Page<ArticleInfo> getPaginationArticleInfo(int page, int pageSize) {
-        Page<ArticleInfo> infos = articleInfoDao.findAllByIsDeleteLike(0,PaginationUtil.defaultSortedPageRequest(page, pageSize,"publishDate", Sort.Direction.ASC));
-        for (ArticleInfo info : infos) {
-            ArticleUtil.setAttributeName(info,attributeDao);
-            ArticleUtil.appendTags(info,tagDao,articleAndTagDao);
-        }
-        return infos;
-    }
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -65,15 +56,15 @@ public class ArticlesServiceImpl implements ArticlesService {
     }
 
     @Override
-    public Page<ArticleInfo> dynamicSearch(String title, int attributeId, LocalDate startDate, LocalDate endDate, int page, int pageSize) {
+    public Page<ArticleInfo> dynamicSearch(String title, Integer attributeId, LocalDate startDate, LocalDate endDate, int page, int pageSize, String orderBy) {
         Specification<ArticleInfo> specification = (Specification<ArticleInfo>) (root, query, criteriaBuilder) -> {
             List<Predicate> predicateList = new ArrayList<>();
             predicateList.add(criteriaBuilder.equal(root.get("isDelete"),0));
-            if(!title.isEmpty()){
+            if(title!=null&&!title.isEmpty()){
                 //TODO:根据阿里代码规范不应该出现全模糊搜索
                 predicateList.add(criteriaBuilder.like(root.get("title"),"%"+title+"%"));
             }
-            if(attributeId!=0){
+            if(attributeId!=null&&attributeId!=0){
                 predicateList.add(criteriaBuilder.equal(root.get("attributeId"),attributeId));
             }
             if(startDate!=null&&endDate!=null){
@@ -81,7 +72,15 @@ public class ArticlesServiceImpl implements ArticlesService {
             }
             return criteriaBuilder.and(predicateList.toArray(new Predicate[0]));
         };
-        Page<ArticleInfo> articleInfos = articleInfoDao.findAll(specification, PaginationUtil.defaultSortedPageRequest(page,pageSize,"articleId", Sort.Direction.ASC));
+        Sort.Direction direction = Sort.Direction.DESC;
+        if(orderBy==null||orderBy.isEmpty()){
+            orderBy = "articleId";
+            direction = Sort.Direction.ASC;
+        }
+        Page<ArticleInfo> articleInfos =
+                articleInfoDao.
+                        findAll(specification,
+                                PaginationUtil.defaultSortedPageRequest(page,pageSize,orderBy,direction));
         for (ArticleInfo articleInfo :
                 articleInfos) {
             ArticleUtil.setAttributeName(articleInfo,attributeDao);

@@ -5,6 +5,8 @@ import org.hibernate.result.ResultSetOutput;
 import org.hibernate.result.internal.OutputsImpl;
 import org.junit.jupiter.api.Test;
 
+import java.util.Stack;
+
 /**
  * @author Rorke
  * @date 2020/3/27 0:22
@@ -12,12 +14,9 @@ import org.junit.jupiter.api.Test;
 public class SimpleTest {
     @Test
     void divideTest(){
-        int i = 3;
-        int result = i++*i++*i++;
-        //3*4*5
-        System.out.println(result);
-        int result2 = result++ + ++result;
-        System.out.println(result2);
-        //60+62
+        Double test = 1.0D;
+        System.out.println(test*10);
+        Double test1 = 1.0001D;
+        System.out.println(test1*10);
     }
 }

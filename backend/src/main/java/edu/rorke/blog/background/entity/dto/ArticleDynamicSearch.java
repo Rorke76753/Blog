@@ -14,10 +14,11 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ArticleDynamicSearch {
-    private int page;
-    private int pageSize;
+    private Integer page;
+    private Integer pageSize;
     private String title;
-    private int attributeId;
+    private Integer attributeId;
     private LocalDate startDate;
     private LocalDate endDate;
+    private String orderBy;
 }

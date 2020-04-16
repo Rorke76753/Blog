@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import TagTable from "../../../../../components/table/management/tag/TagTable";
+import TagTable from "../../../../components/admin/table/management/tag/TagTable";
 import axios from "axios";
 export default {
   name: "TagManagementPage",

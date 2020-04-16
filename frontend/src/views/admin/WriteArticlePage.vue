@@ -43,11 +43,11 @@
 </template>
 
 <script>
-import ArticleEditor from "../../../components/article/ArticleEditor";
-import TagsInput from "../../../components/article/form/TagsInput";
-import Description from "../../../components/article/form/Description";
-import Title from "../../../components/article/form/Title";
-import AttributeChoice from "../../../components/article/form/AttributeChoice";
+import ArticleEditor from "../../components/admin/article/ArticleEditor";
+import TagsInput from "../../components/admin/article/form/TagsInput";
+import Description from "../../components/admin/article/form/Description";
+import Title from "../../components/admin/article/form/Title";
+import AttributeChoice from "../../components/admin/article/form/AttributeChoice";
 import axios from "axios";
 export default {
   name: "ArticleManagementPage",
@@ -80,7 +80,7 @@ export default {
       this.description = this.$refs.description.getData();
       this.article = this.$refs.editor.getData();
       this.tags = this.$refs.tagsInput.getData();
-      let putUrl = axios.defaults.baseURL + "/article";
+      let putUrl = axios.defaults.baseURL + "/articleInfo";
       axios
         .post(putUrl, {
           title: this.title,

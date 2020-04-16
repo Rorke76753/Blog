@@ -5,8 +5,10 @@ import edu.rorke.blog.background.entity.ArticleInfo;
 import edu.rorke.blog.background.entity.Tag;
 import edu.rorke.blog.background.repository.ArticleAndTagDao;
 import edu.rorke.blog.background.repository.ArticleInfoDao;
+import edu.rorke.blog.background.repository.AttributeDao;
 import edu.rorke.blog.background.repository.TagDao;
 import edu.rorke.blog.background.service.TagService;
+import edu.rorke.blog.background.util.ArticleUtil;
 import edu.rorke.blog.background.util.PaginationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,12 +27,13 @@ public class TagServiceImpl implements TagService {
     private final TagDao tagDao;
     private final ArticleAndTagDao articleAndTagDao;
     private final ArticleInfoDao articleInfoDao;
+    private final AttributeDao attributeDao;
 
-    @Autowired
-    public TagServiceImpl(TagDao tagDao, ArticleAndTagDao articleAndTagDao, ArticleInfoDao articleInfoDao) {
+    public TagServiceImpl(TagDao tagDao, ArticleAndTagDao articleAndTagDao, ArticleInfoDao articleInfoDao, AttributeDao attributeDao) {
         this.tagDao = tagDao;
-        this.articleInfoDao = articleInfoDao;
         this.articleAndTagDao = articleAndTagDao;
+        this.articleInfoDao = articleInfoDao;
+        this.attributeDao = attributeDao;
     }
 
     @Override
@@ -51,6 +54,10 @@ public class TagServiceImpl implements TagService {
                 relations) {
             articleId.add(relation.getArticleId());
         }
-        return articleInfoDao.findAllById(articleId);
+        List<ArticleInfo> infos = articleInfoDao.findAllById(articleId);
+        for(ArticleInfo info:infos){
+            ArticleUtil.setAttributeName(info,attributeDao);
+        }
+        return infos;
     }
 }

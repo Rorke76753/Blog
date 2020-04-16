@@ -16,8 +16,8 @@
 </template>
 
 <script>
-import LoginTable from "../../../../components/table/log/LoginTable";
-import Pagination from "../../../../components/table/Pagination";
+import LoginTable from "../../../components/admin/table/log/LoginTable";
+import Pagination from "../../../components/admin/table/Pagination";
 
 export default {
   name: "LoginLog",

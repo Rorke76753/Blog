@@ -1,20 +1,22 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Admin from "../views/background/Admin.vue";
-import Home from "../views/background/subpage/Home";
-import WriteArticlePage from "../views/background/subpage/WriteArticlePage";
-import ArticleListPage from "../views/background/subpage/management/article/ArticleListPage";
-import TagManagementPage from "../views/background/subpage/management/tag/TagManagementPage";
-import ArticlesChoicePage from "../views/background/subpage/management/comment/ArticlesChoicePage";
-import CommentManagementPage from "../views/background/subpage/management/comment/CommentManagementPage";
-import OperationLog from "../views/background/subpage/log/OperationLog";
-import LoginLog from "../views/background/subpage/log/LoginLog";
-import ArticleManagementPage from "../views/background/subpage/management/article/ArticleManagementPage";
+import Admin from "../views/admin/Admin.vue";
+import Home from "../views/admin/AdminHome";
+import WriteArticlePage from "../views/admin/WriteArticlePage";
+import ArticleListPage from "../views/admin/management/article/ArticleListPage";
+import TagManagementPage from "../views/admin/management/tag/TagManagementPage";
+import ArticlesChoicePage from "../views/admin/management/comment/ArticlesChoicePage";
+import CommentManagementPage from "../views/admin/management/comment/CommentManagementPage";
+import OperationLog from "../views/admin/log/OperationLog";
+import LoginLog from "../views/admin/log/LoginLog";
+import ArticleManagementPage from "../views/admin/management/article/ArticleManagementPage";
+import FrontIndex from "../views/front/FrontIndex";
+import ArticleContent from "../views/front/FrontArticleContent";
 Vue.use(VueRouter);
 
 const routes = [
   {
-    path: "/",
+    path: "/admin",
     redirect: "/admin/homepage",
     component: Admin,
     children: [
@@ -28,7 +30,7 @@ const routes = [
         component: ArticleListPage
       },
       {
-        path: "/admin/article",
+        path: "/admin/articleInfo",
         name: "ArticleManagementPage",
         component: ArticleManagementPage
       },
@@ -63,6 +65,14 @@ const routes = [
         component: WriteArticlePage
       }
     ]
+  },{
+    path: "/",
+    name: "首页",
+    component: FrontIndex
+  },{
+    path: "/article/:articleId",
+    name: "articleContent",
+    component: ArticleContent
   }
 ];
 
