@@ -1,4 +1,4 @@
-package edu.rorke.blog.background.controller.admin;
+package edu.rorke.blog.background.controller;
 
 import edu.rorke.blog.background.entity.Attribute;
 import edu.rorke.blog.background.service.AttributeService;

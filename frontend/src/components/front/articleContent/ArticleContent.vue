@@ -1,11 +1,9 @@
 <template>
   <div class="contentClass">
-    <el-card >
+    <el-card>
       <p style="font-size: 30px;margin: 10px  0px">
         <b>{{ articleInfo.title }}</b>
       </p>
-
-
       <el-button
         type="plain"
         v-for="tag in articleInfo.tagList"
@@ -14,25 +12,67 @@
         :style="{
           'background-color': color[articleInfo.tagList.indexOf(tag) % 10],
           color: 'white',
-          padding: '4px 8px'
+          padding: '4px 8px',
+          'border-width': '0px'
         }"
         >{{ tag.tagContent }}</el-button
       >
-      <el-row style="margin: 10px">
-        <el-col :span="8"><p style="font-size: 14px">{{articleInfo.likeNum}}</p></el-col>
-        <el-col :span="8"><p style="font-size: 14px">{{articleInfo.clickNum}}</p></el-col>
-        <el-col :span="8">
-          <p style="font-size: 14px">publish at / {{articleInfo.publishDate}}</p>
-        </el-col>
-      </el-row>
-
-
+      <div style="display: flex;justify-content: space-between;color:#808080">
+        <div style="display: flex">
+          <p style="font-size: 14px;padding-right: 50px">
+            <i class="el-icon-s-opportunity"></i>{{ articleInfo.likeNum }}
+          </p>
+          <p style="font-size: 14px">
+            <i class="el-icon-view"></i>
+            {{ articleInfo.clickNum }}
+          </p>
+        </div>
+        <div style="display: flex">
+          <p style="font-size: 14px">
+            publish at / {{ articleInfo.publishDate }}
+          </p>
+          <p style="font-size: 14px;padding-left: 50px">
+            last update at / {{ articleInfo.lastUpdate }}
+          </p>
+        </div>
+      </div>
       <div slot="default" style="padding-top: 50px">
         <viewer
           :initial-value="articleContent"
           height="500px"
           ref="viewer"
         ></viewer>
+      </div>
+    </el-card>
+    <el-card style="margin-top: 30px">
+      <div class="commentList" style="text-align: center">
+        <span>
+          暂无评论
+        </span>
+      </div>
+      <el-divider></el-divider>
+      <div class="commentForm">
+        <div style="display: flex;justify-content: space-between">
+          <el-input v-model="nickName" placeholder="用户昵称"></el-input>
+          <el-input v-model="emailAddress" placeholder="联系邮箱"></el-input>
+          <el-tooltip
+            class="item"
+            effect="dark"
+            content="等待开发中"
+            placement="bottom"
+          >
+            <el-button type="primary" disabled>发表评论</el-button>
+          </el-tooltip>
+        </div>
+        <div style="padding-top:20px">
+          <el-input
+            type="textarea"
+            :autosize="{ minRows: 2, maxRows: 4 }"
+            placeholder="评论内容"
+            v-model="commentContent"
+          >
+          </el-input>
+        </div>
       </div>
     </el-card>
   </div>
@@ -52,7 +92,10 @@ export default {
   data() {
     return {
       articleContent: "",
-      color: ["OrangeRed", "orange", "#ffd152", "LimeGreen", "DodgerBlue"]
+      color: ["OrangeRed", "orange", "#ffd152", "LimeGreen", "DodgerBlue"],
+      nickName: "",
+      emailAddress: "",
+      commentContent: ""
     };
   },
   methods: {
@@ -70,5 +113,9 @@ export default {
   width: 80%;
   margin-left: 22%;
   margin-top: 30px;
+}
+.el-input {
+  width: 200px;
+  height: 30px !important;
 }
 </style>

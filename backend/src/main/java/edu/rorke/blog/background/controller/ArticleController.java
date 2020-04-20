@@ -1,4 +1,4 @@
-package edu.rorke.blog.background.controller.admin;
+package edu.rorke.blog.background.controller;
 
 import edu.rorke.blog.background.entity.ArticleContent;
 import edu.rorke.blog.background.entity.ArticleInfo;

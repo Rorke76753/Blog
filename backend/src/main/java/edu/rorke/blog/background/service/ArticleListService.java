@@ -9,7 +9,7 @@ import java.time.LocalDate;
  * @author Rorke
  * @date 2020/4/6 13:53
  */
-public interface ArticlesService {
+public interface ArticleListService {
 
     /**
      * 多删除

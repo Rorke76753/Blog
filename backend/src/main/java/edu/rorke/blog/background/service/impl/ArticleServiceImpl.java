@@ -7,9 +7,11 @@ import edu.rorke.blog.background.repository.*;
 import edu.rorke.blog.background.service.ArticleService;
 import edu.rorke.blog.background.util.ArticleUtil;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.Serializable;
 import java.util.Optional;
 
 
@@ -24,13 +26,20 @@ public class ArticleServiceImpl implements ArticleService {
     private final TagDao tagDao;
     private final AttributeDao attributeDao;
     private final ArticleContentDao articleContentDao;
+    private final RedisTemplate<String, Serializable> redisTemplate;
 
-    public ArticleServiceImpl(ArticleInfoDao articleInfoDao, ArticleAndTagDao articleAndTagDao, TagDao tagDao, AttributeDao attributeDao, ArticleContentDao articleContentDao) {
+    public ArticleServiceImpl(ArticleInfoDao articleInfoDao,
+                              ArticleAndTagDao articleAndTagDao,
+                              TagDao tagDao,
+                              AttributeDao attributeDao,
+                              ArticleContentDao articleContentDao,
+                              RedisTemplate<String, Serializable> redisTemplate) {
         this.articleInfoDao = articleInfoDao;
         this.articleAndTagDao = articleAndTagDao;
         this.tagDao = tagDao;
         this.attributeDao = attributeDao;
         this.articleContentDao = articleContentDao;
+        this.redisTemplate = redisTemplate;
     }
 
     @Transactional(rollbackFor = Exception.class)

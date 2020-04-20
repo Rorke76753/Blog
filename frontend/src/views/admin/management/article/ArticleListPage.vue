@@ -119,7 +119,7 @@ export default {
     },
 
     dynamicTable() {
-      let url = axios.defaults.baseURL + "/articles/searching";
+      let url = axios.defaults.baseURL + "/articles";
       let startDate, endDate;
       if (this.datePicker == null) {
         startDate = null;

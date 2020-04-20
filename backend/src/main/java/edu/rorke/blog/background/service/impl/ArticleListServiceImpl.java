@@ -5,7 +5,7 @@ import edu.rorke.blog.background.repository.ArticleAndTagDao;
 import edu.rorke.blog.background.repository.ArticleInfoDao;
 import edu.rorke.blog.background.repository.AttributeDao;
 import edu.rorke.blog.background.repository.TagDao;
-import edu.rorke.blog.background.service.ArticlesService;
+import edu.rorke.blog.background.service.ArticleListService;
 import edu.rorke.blog.background.util.ArticleUtil;
 import edu.rorke.blog.background.util.PaginationUtil;
 import org.springframework.data.domain.Page;
@@ -23,13 +23,13 @@ import java.util.*;
  * @date 2020/4/6 13:54
  */
 @Service
-public class ArticlesServiceImpl implements ArticlesService {
+public class ArticleListServiceImpl implements ArticleListService {
     private final ArticleInfoDao articleInfoDao;
     private final ArticleAndTagDao articleAndTagDao;
     private final TagDao tagDao;
     private final AttributeDao attributeDao;
 
-    public ArticlesServiceImpl(ArticleInfoDao articleInfoDao, ArticleAndTagDao articleAndTagDao, TagDao tagDao, AttributeDao attributeDao) {
+    public ArticleListServiceImpl(ArticleInfoDao articleInfoDao, ArticleAndTagDao articleAndTagDao, TagDao tagDao, AttributeDao attributeDao) {
         this.articleInfoDao = articleInfoDao;
         this.articleAndTagDao = articleAndTagDao;
         this.tagDao = tagDao;

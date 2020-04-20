@@ -1,14 +1,13 @@
-package edu.rorke.blog.background.controller.admin;
+package edu.rorke.blog.background.controller;
 
 import edu.rorke.blog.background.entity.ArticleInfo;
 import edu.rorke.blog.background.entity.dto.ArticleDynamicSearch;
-import edu.rorke.blog.background.service.ArticlesService;
+import edu.rorke.blog.background.service.ArticleListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 
 /**
  * @author Rorke
@@ -17,20 +16,20 @@ import java.util.Arrays;
 
 @RestController
 @RequestMapping("/api/articles")
-public class ArticlesController {
-    private final ArticlesService articlesService;
+public class ArticleListController {
+    private final ArticleListService articleListService;
 
     @Autowired
-    public ArticlesController(ArticlesService articlesService) {
-        this.articlesService = articlesService;
+    public ArticleListController(ArticleListService articleListService) {
+        this.articleListService = articleListService;
     }
 
     @DeleteMapping
     public Integer[] deleteMultipleArticles(@RequestParam Integer[] articleIds){
-        return articlesService.deleteMultipleById(articleIds);
+        return articleListService.deleteMultipleById(articleIds);
     }
 
-    @PostMapping("/searching")
+    @PostMapping
     public Page<ArticleInfo> getPaginationArticleInfoWithDynamicSearch(@RequestBody ArticleDynamicSearch articleDynamicSearch){
         String title = articleDynamicSearch.getTitle();
         Integer attributeId = articleDynamicSearch.getAttributeId();
@@ -39,7 +38,7 @@ public class ArticlesController {
         Integer page = articleDynamicSearch.getPage();
         Integer pageSize = articleDynamicSearch.getPageSize();
         String orderBy = articleDynamicSearch.getOrderBy();
-        return  articlesService.dynamicSearch(title,attributeId,startDate,endDate,page,pageSize,orderBy);
+        return  articleListService.dynamicSearch(title,attributeId,startDate,endDate,page,pageSize,orderBy);
     }
 }
 

@@ -61,6 +61,7 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   name: "ArticleInfo",
   props: {
@@ -73,9 +74,9 @@ export default {
     };
   },
   methods: {
-
     getArticleContent(id) {
       let _this = this;
+      axios.get("/click/" + id);
       this.$router.push({
         name: "articleContent",
         params: {

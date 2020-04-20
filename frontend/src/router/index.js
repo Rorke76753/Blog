@@ -1,7 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Admin from "../views/admin/Admin.vue";
-import Home from "../views/admin/AdminHome";
 import WriteArticlePage from "../views/admin/WriteArticlePage";
 import ArticleListPage from "../views/admin/management/article/ArticleListPage";
 import TagManagementPage from "../views/admin/management/tag/TagManagementPage";
@@ -11,7 +10,9 @@ import OperationLog from "../views/admin/log/OperationLog";
 import LoginLog from "../views/admin/log/LoginLog";
 import ArticleManagementPage from "../views/admin/management/article/ArticleManagementPage";
 import FrontIndex from "../views/front/FrontIndex";
-import ArticleContent from "../views/front/FrontArticleContent";
+import FrontArticleContent from "../views/front/subpage/FrontArticleContent";
+import FrontArticleInfo from "../views/front/subpage/FrontArticleInfo";
+import FrontTimeLine from "../views/front/subpage/FrontTimeLine";
 Vue.use(VueRouter);
 
 const routes = [
@@ -19,11 +20,15 @@ const routes = [
     path: "/admin",
     redirect: "/admin/homepage",
     component: Admin,
+    beforeEnter: (to, from, next) => {
+      console.log(to, from, next);
+      if (to) {
+        next(false);
+      } else {
+        next();
+      }
+    },
     children: [
-      {
-        path: "/admin/homepage",
-        component: Home
-      },
       {
         path: "/admin/articles",
         name: "文章管理",
@@ -65,14 +70,29 @@ const routes = [
         component: WriteArticlePage
       }
     ]
-  },{
+  },
+  {
     path: "/",
     name: "首页",
-    component: FrontIndex
-  },{
-    path: "/article/:articleId",
-    name: "articleContent",
-    component: ArticleContent
+    component: FrontIndex,
+    redirect: "/index",
+    children: [
+      {
+        path: "/index",
+        name: "index",
+        component: FrontArticleInfo
+      },
+      {
+        path: "/article/:articleId",
+        name: "articleContent",
+        component: FrontArticleContent
+      },
+      {
+        path:"/timeline",
+        name: "articleTimeLine",
+        component: FrontTimeLine
+      }
+    ]
   }
 ];
 
