@@ -2,7 +2,7 @@
   <div class="contentClass">
     <el-card>
       <p style="font-size: 30px;margin: 10px  0px">
-        <b>{{ articleInfo.title }}</b>
+        <b>【{{ articleInfo.attributeName }}】{{ articleInfo.title }}</b>
       </p>
       <el-button
         type="plain"
@@ -30,9 +30,6 @@
         <div style="display: flex">
           <p style="font-size: 14px">
             publish at / {{ articleInfo.publishDate }}
-          </p>
-          <p style="font-size: 14px;padding-left: 50px">
-            last update at / {{ articleInfo.lastUpdate }}
           </p>
         </div>
       </div>

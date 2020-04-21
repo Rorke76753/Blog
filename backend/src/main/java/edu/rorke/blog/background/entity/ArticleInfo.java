@@ -14,6 +14,7 @@ import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.temporal.TemporalUnit;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Rorke
@@ -65,5 +66,24 @@ public class ArticleInfo implements Serializable,Comparable<ArticleInfo> {
             oPriority *= 10;
         }
         return (int) (oPriority-thisPriority);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ArticleInfo)) {
+            return false;
+        }
+        ArticleInfo info = (ArticleInfo) o;
+        return getArticleId() == info.getArticleId() &&
+                Objects.equals(getTitle(), info.getTitle()) &&
+                getPublishDate().equals(info.getPublishDate());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getArticleId(), getTitle(), getPublishDate());
     }
 }

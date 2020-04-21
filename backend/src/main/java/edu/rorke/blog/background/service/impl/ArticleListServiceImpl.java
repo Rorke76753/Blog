@@ -7,14 +7,17 @@ import edu.rorke.blog.background.repository.AttributeDao;
 import edu.rorke.blog.background.repository.TagDao;
 import edu.rorke.blog.background.service.ArticleListService;
 import edu.rorke.blog.background.util.ArticleUtil;
+import edu.rorke.blog.background.util.CacheUtil;
 import edu.rorke.blog.background.util.PaginationUtil;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.criteria.Predicate;
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -28,14 +31,19 @@ public class ArticleListServiceImpl implements ArticleListService {
     private final ArticleAndTagDao articleAndTagDao;
     private final TagDao tagDao;
     private final AttributeDao attributeDao;
+    private final RedisTemplate<String, Serializable> redisTemplate;
 
-    public ArticleListServiceImpl(ArticleInfoDao articleInfoDao, ArticleAndTagDao articleAndTagDao, TagDao tagDao, AttributeDao attributeDao) {
+    public ArticleListServiceImpl(ArticleInfoDao articleInfoDao,
+                                  ArticleAndTagDao articleAndTagDao,
+                                  TagDao tagDao,
+                                  AttributeDao attributeDao,
+                                  RedisTemplate<String, Serializable> redisTemplate) {
         this.articleInfoDao = articleInfoDao;
         this.articleAndTagDao = articleAndTagDao;
         this.tagDao = tagDao;
         this.attributeDao = attributeDao;
+        this.redisTemplate = redisTemplate;
     }
-
 
     @Transactional(rollbackFor = Exception.class)
     @Override
@@ -50,6 +58,7 @@ public class ArticleListServiceImpl implements ArticleListService {
             ArticleUtil.modifyTagRelativeNum(info.getArticleId(),-1,tagDao,articleAndTagDao);
             info.setIsDelete(isDelete);
             articleInfoDao.save(info);
+            CacheUtil.deleteRecommend(info,redisTemplate,tagDao,articleAndTagDao,attributeDao);
             success.add(info.getArticleId());
         }
         return success.toArray(new Integer[0]);

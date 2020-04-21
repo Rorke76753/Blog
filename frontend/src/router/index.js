@@ -20,14 +20,14 @@ const routes = [
     path: "/admin",
     redirect: "/admin/homepage",
     component: Admin,
-    beforeEnter: (to, from, next) => {
-      console.log(to, from, next);
-      if (to) {
-        next(false);
-      } else {
-        next();
-      }
-    },
+    // beforeEnter: (to, from, next) => {
+    //   console.log(to, from, next);
+    //   if (to) {
+    //     next(false);
+    //   } else {
+    //     next();
+    //   }
+    // },
     children: [
       {
         path: "/admin/articles",

@@ -6,12 +6,14 @@ import edu.rorke.blog.background.entity.dto.Article;
 import edu.rorke.blog.background.repository.*;
 import edu.rorke.blog.background.service.ArticleService;
 import edu.rorke.blog.background.util.ArticleUtil;
+import edu.rorke.blog.background.util.CacheUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -49,6 +51,7 @@ public class ArticleServiceImpl implements ArticleService {
         articleContent.setArticleId(id);
         ArticleUtil.saveTags(id, articleInfo.getTagList(),tagDao,articleAndTagDao);
         ArticleUtil.modifyAttributeRelativeNum(articleInfo.getAttributeId(),1,attributeDao);
+        CacheUtil.updateRecentArticle(articleInfo,redisTemplate);
         return saveNewArticleContent(articleContent);
     }
 
@@ -84,6 +87,7 @@ public class ArticleServiceImpl implements ArticleService {
             ArticleUtil.modifyTagRelativeNum(articleId,-1,tagDao,articleAndTagDao);
             articleInfo.setIsDelete(1);
             articleInfoDao.save(articleInfo);
+            CacheUtil.deleteRecommend(articleInfo,redisTemplate,tagDao,articleAndTagDao,attributeDao);
         });
     }
 

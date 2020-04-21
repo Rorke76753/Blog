@@ -33,12 +33,12 @@
       <el-table-column
         prop="publishDate"
         label="发表时间"
-        width="90"
+        width="100"
       ></el-table-column>
       <el-table-column
         prop="lastUpdate"
         label="最后修改"
-        width="90"
+        width="100"
       ></el-table-column>
       <el-table-column
         prop="clickNum"
@@ -123,7 +123,7 @@ export default {
     deleteArticle(index, articleId, articleTitle) {
       let _this = this;
       let confirmMessage = "是否删除文章：" + articleTitle;
-      let deleteUrl = axios.defaults.baseURL + "/articleInfo/" + articleId;
+      let deleteUrl = axios.defaults.baseURL + "/article/" + articleId;
       this.$confirm(confirmMessage, "确认删除文章", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",

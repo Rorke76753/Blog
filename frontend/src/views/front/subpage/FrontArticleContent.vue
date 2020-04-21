@@ -19,7 +19,16 @@
             <div style="border-left: #0088ff 5px solid;padding-left: 20px">
               <h3>推荐阅读</h3>
             </div>
-            //正在开发中^^
+            <div>
+              <el-link
+                v-for="recommendInfo in recommendList"
+                :key="recommendInfo.articleId"
+                @click="jumpTo(recommendInfo)"
+                style="padding-left: 20px;padding-top: 10px"
+              >
+                【{{ recommendInfo.attributeName }}】{{ recommendInfo.title }}
+              </el-link>
+            </div>
           </div>
         </div>
       </el-col>
@@ -38,10 +47,12 @@ export default {
   data() {
     return {
       articleInfo: {},
-      articleId: ""
+      articleId: "",
+      recommendList: []
     };
   },
   created() {
+    console.log(this.$route.params.articleInfo);
     if (this.$route.params.articleInfo) {
       this.articleInfo = this.$route.params.articleInfo;
       sessionStorage.setItem("articleInfo", JSON.stringify(this.articleInfo));
@@ -51,6 +62,9 @@ export default {
     this.articleId = this.$route.params.articleId;
     this.getContent();
   },
+  mounted() {
+    this.getRecommend();
+  },
   methods: {
     getContent() {
       axios.get("/article/" + this.$route.params.articleId).then(res => {
@@ -59,6 +73,27 @@ export default {
           this.$refs.articleContent.initContent(this.articleContent);
         }
       });
+    },
+    getRecommend() {
+      axios.get("/recommend").then(res => {
+        if (res.status === 200) {
+          this.recommendList = res.data;
+        }
+      });
+    },
+    jumpTo(articleInfo) {
+      if (articleInfo.articleId !== this.$route.params.articleId) {
+        this.articleInfo = articleInfo;
+        axios.get("/click/" + articleInfo.articleId);
+        this.getContent();
+        this.$router.push({
+          name: "articleContent",
+          params: {
+            articleId: articleInfo.articleId,
+            articleInfo: articleInfo
+          }
+        });
+      }
     }
   }
 };

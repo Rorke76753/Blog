@@ -17,9 +17,5 @@ public interface ClickService {
      */
     void countClickNums(int articleId,String ipAddress);
 
-    /**
-     * 更新推荐列表
-     * @param articleInfo
-     */
-    void updateRecommend(ArticleInfo articleInfo);
+
 }

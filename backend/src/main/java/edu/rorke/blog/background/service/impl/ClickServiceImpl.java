@@ -1,7 +1,10 @@
 package edu.rorke.blog.background.service.impl;
 
 import edu.rorke.blog.background.entity.ArticleInfo;
+import edu.rorke.blog.background.repository.ArticleAndTagDao;
 import edu.rorke.blog.background.repository.ArticleInfoDao;
+import edu.rorke.blog.background.repository.AttributeDao;
+import edu.rorke.blog.background.repository.TagDao;
 import edu.rorke.blog.background.service.ClickService;
 import edu.rorke.blog.background.util.CacheUtil;
 import io.lettuce.core.RedisCommandExecutionException;
@@ -20,13 +23,20 @@ import java.util.*;
 public class ClickServiceImpl implements ClickService {
     private final ArticleInfoDao articleInfoDao;
     private final RedisTemplate<String, Serializable> redisTemplate;
+    private final TagDao tagDao;
+    private final ArticleAndTagDao articleAndTagDao;
+    private final AttributeDao attributeDao;
 
-
-
-
-    public ClickServiceImpl(ArticleInfoDao articleInfoDao, RedisTemplate<String, Serializable> redisTemplate) {
+    public ClickServiceImpl(ArticleInfoDao articleInfoDao,
+                            RedisTemplate<String, Serializable> redisTemplate,
+                            TagDao tagDao,
+                            ArticleAndTagDao articleAndTagDao,
+                            AttributeDao attributeDao) {
         this.articleInfoDao = articleInfoDao;
         this.redisTemplate = redisTemplate;
+        this.tagDao = tagDao;
+        this.articleAndTagDao = articleAndTagDao;
+        this.attributeDao = attributeDao;
     }
 
     @Override
@@ -48,32 +58,29 @@ public class ClickServiceImpl implements ClickService {
         }
     }
 
+    /**
+     * 更新推荐列表
+     * @param articleInfo 文章信息
+     */
     @Transactional(rollbackFor = Exception.class)
-    @Override
-    public void updateRecommend(ArticleInfo articleInfo) {
+    protected void updateRecommend(ArticleInfo articleInfo) {
         articleInfo.calculatePriority();
-        try{
-            List<Serializable> list = redisTemplate.opsForList().range(CacheUtil.RECOMMEND,0,-1);
-            List<ArticleInfo> infoList = new ArrayList<>();
-            assert list!=null;
-            for(Serializable se:list){
-                ArticleInfo info = (ArticleInfo) se;
-                info.calculatePriority();
-                infoList.add(info);
-            }
+        List<ArticleInfo> infoList = CacheUtil.getRedisList(ArticleInfo.class,CacheUtil.ARTICLE_RECOMMEND,redisTemplate,tagDao,articleAndTagDao,attributeDao);
+        if(infoList.size()!=0) {
             if(!infoList.contains(articleInfo)) {
                 infoList.add(articleInfo);
             }
             infoList.sort(ArticleInfo::compareTo);
-            for (int i = 0; i < list.size(); i++) {
-                redisTemplate.opsForList().leftPop(CacheUtil.RECOMMEND);
-                redisTemplate.opsForList().rightPush(CacheUtil.RECOMMEND,infoList.get(i));
+            int popCnt = Math.toIntExact(redisTemplate.opsForList().size(CacheUtil.ARTICLE_RECOMMEND));
+            for (int i = 0; i < popCnt; i++) {
+                redisTemplate.opsForList().leftPop(CacheUtil.ARTICLE_RECOMMEND);
+                redisTemplate.opsForList().rightPush(CacheUtil.ARTICLE_RECOMMEND,infoList.get(i));
             }
-            if(list.size()<CacheUtil.RECOMMEND_LIST_SIZE&&list.size()<infoList.size()){
-                redisTemplate.opsForList().rightPush(CacheUtil.RECOMMEND,infoList.get(list.size()));
+            if(popCnt<CacheUtil.RECOMMEND_LIST_SIZE&&popCnt<infoList.size()){
+                redisTemplate.opsForList().rightPush(CacheUtil.ARTICLE_RECOMMEND,infoList.get(popCnt));
             }
-        }catch (RedisCommandExecutionException e){
-            redisTemplate.opsForList().leftPush(CacheUtil.RECOMMEND,articleInfo);
+        }else {
+            redisTemplate.opsForList().leftPush(CacheUtil.ARTICLE_RECOMMEND, articleInfo);
         }
     }
 
