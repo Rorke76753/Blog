@@ -61,7 +61,7 @@ public class ArticleInfo implements Serializable,Comparable<ArticleInfo> {
     public int compareTo(ArticleInfo o) {
         double thisPriority = this.recommendPriority;
         double oPriority = o.recommendPriority;
-        while(thisPriority%1!=0&&oPriority%1!=0){
+        while(thisPriority%1!=0||oPriority%1!=0){
             thisPriority *= 10;
             oPriority *= 10;
         }

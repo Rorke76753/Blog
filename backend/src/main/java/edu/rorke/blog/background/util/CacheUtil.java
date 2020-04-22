@@ -40,7 +40,7 @@ public class CacheUtil {
                                            RedisTemplate<String, Serializable> redisTemplate,
                                            TagDao tagDao,
                                            ArticleAndTagDao articleAndTagDao,
-                                           AttributeDao attributeDao){
+                                           AttributeDao attributeDao) {
         List<T> resultList = new ArrayList<>();
         if (!Objects.equals(redisTemplate.hasKey(key), Boolean.FALSE)) {
             List<Serializable> list = redisTemplate.opsForList().range(key, 0, -1);
@@ -48,7 +48,7 @@ public class CacheUtil {
             for (Serializable se : list) {
                 T target = (T) se;
                 if (type == ArticleInfo.class) {
-                    articleInfoOperation((ArticleInfo) target, tagDao, articleAndTagDao,attributeDao);
+                    articleInfoOperation((ArticleInfo) target, tagDao, articleAndTagDao, attributeDao);
                 }
                 resultList.add(target);
             }
@@ -56,32 +56,87 @@ public class CacheUtil {
         return resultList;
     }
 
-    private static void articleInfoOperation(ArticleInfo info, TagDao tagDao, ArticleAndTagDao articleAndTagDao, AttributeDao attributeDao) {
-        info.calculatePriority();
-        ArticleUtil.setAttributeName(info,attributeDao);
-        ArticleUtil.appendTags(info, tagDao, articleAndTagDao);
+    /**
+     * 删除在缓存列表上的元素，“删除”一篇文章的时候这篇文章可能在推荐列表以及最近发布列表上，这时候就需要删除在推荐列表上的这篇文章
+     *
+     * @param articleInfos     删除的文章信息
+     * @param redisTemplate    操作缓存
+     * @param tagDao           标签dao
+     * @param articleAndTagDao 文章与标签关系dao
+     * @param attributeDao     属性dao
+     */
+    public static void deleteElementOfKeyList(String key,
+                                              RedisTemplate<String, Serializable> redisTemplate,
+                                              TagDao tagDao,
+                                              ArticleAndTagDao articleAndTagDao,
+                                              AttributeDao attributeDao,
+                                              ArticleInfo... articleInfos) {
+        for (ArticleInfo info : articleInfos) {
+            articleInfoOperation(info, tagDao, articleAndTagDao, attributeDao);
+        }
+        List<ArticleInfo> infoList = getRedisList(ArticleInfo.class, key, redisTemplate, tagDao, articleAndTagDao, attributeDao);
+        for (ArticleInfo info : articleInfos) {
+            infoList.remove(info);
+        }
+        int cacheListLength = Math.toIntExact(redisTemplate.opsForList().size(key));
+        for (int i = 0; i < cacheListLength; i++) {
+            if (i < infoList.size()) {
+                redisTemplate.opsForList().rightPush(key, infoList.get(i));
+            }
+            redisTemplate.opsForList().leftPop(key);
+        }
     }
 
     /**
-     * 删除推荐，“删除”一篇文章的时候这篇文章可能在推荐列表上，这时候就需要删除在推荐列表上的这篇文章
-     * @param articleInfo 删除的文章信息
-     * @param redisTemplate 操作缓存
-     * @param tagDao 标签dao
-     * @param articleAndTagDao 文章与标签关系dao
-     * @param attributeDao 属性dao
+     * 更新推荐列表
+     *
+     * @param articleInfo 文章信息
      */
-    public static void deleteRecommend(ArticleInfo articleInfo,RedisTemplate<String,Serializable> redisTemplate,TagDao tagDao,ArticleAndTagDao articleAndTagDao,AttributeDao attributeDao) {
-        articleInfoOperation(articleInfo,tagDao,articleAndTagDao,attributeDao);
-        redisTemplate.opsForList().remove(ARTICLE_RECOMMEND,0,articleInfo);
+    public static void updateRecommend(ArticleInfo articleInfo,
+                                       RedisTemplate<String, Serializable> redisTemplate,
+                                       TagDao tagDao,
+                                       ArticleAndTagDao articleAndTagDao,
+                                       AttributeDao attributeDao) {
+        articleInfoOperation(articleInfo, tagDao, articleAndTagDao, attributeDao);
+        List<ArticleInfo> infoList = getRedisList(ArticleInfo.class, ARTICLE_RECOMMEND, redisTemplate, tagDao, articleAndTagDao, attributeDao);
+        if (infoList.size() != 0) {
+            if (!infoList.contains(articleInfo)) {
+                infoList.add(articleInfo);
+            }
+            infoList.sort(ArticleInfo::compareTo);
+            int popCnt = Math.toIntExact(redisTemplate.opsForList().size(ARTICLE_RECOMMEND));
+            for (int i = 0; i < popCnt; i++) {
+                redisTemplate.opsForList().leftPop(ARTICLE_RECOMMEND);
+                redisTemplate.opsForList().rightPush(ARTICLE_RECOMMEND, infoList.get(i));
+            }
+            if (popCnt < RECOMMEND_LIST_SIZE && popCnt < infoList.size()) {
+                redisTemplate.opsForList().rightPush(ARTICLE_RECOMMEND, infoList.get(popCnt));
+            }
+        } else {
+            redisTemplate.opsForList().rightPush(ARTICLE_RECOMMEND, articleInfo);
+        }
     }
 
-    public static void updateRecentArticle(ArticleInfo articleInfo, RedisTemplate<String, Serializable> redisTemplate) {
-        if(Objects.equals(redisTemplate.hasKey(ARTICLE_RECENT),Boolean.TRUE)){
+    public static void saveRecentArticle(ArticleInfo articleInfo, RedisTemplate<String, Serializable> redisTemplate) {
+        if (Objects.equals(redisTemplate.hasKey(ARTICLE_RECENT), Boolean.TRUE)) {
             int cacheRecentSize = Math.toIntExact(redisTemplate.opsForList().size(ARTICLE_RECENT));
-            if(cacheRecentSize == RECENT_LIST_SIZE){
+            if (cacheRecentSize == RECENT_LIST_SIZE) {
                 redisTemplate.opsForList().leftPop(ARTICLE_RECENT);
             }
         }
-        redisTemplate.opsForList().rightPush(ARTICLE_RECENT,articleInfo);
+        redisTemplate.opsForList().rightPush(ARTICLE_RECENT, articleInfo);
+    }
+
+    private static void articleInfoOperation(ArticleInfo info, TagDao tagDao, ArticleAndTagDao articleAndTagDao, AttributeDao attributeDao) {
+        double defaultPriority = 0D;
+        if (info.getRecommendPriority() == defaultPriority) {
+            info.calculatePriority();
+        }
+        if (info.getAttributeName() == null) {
+            ArticleUtil.setAttributeName(info, attributeDao);
+        }
+        if (info.getTagList() == null) {
+            ArticleUtil.appendTags(info, tagDao, articleAndTagDao);
+        }
     }
 }

@@ -36,12 +36,12 @@
           :pager-count="11"
           layout="prev, pager, next"
           :total="1000"
-          style="margin-left: 30%"
+          style="margin-left: 50%;margin-top: 30px"
         >
         </el-pagination>
       </el-col>
       <el-col :span="7">
-        <div style="padding-left: 100px;width: 360px;margin-top: 30px">
+        <div style="padding-left: 100px;width: 80%;margin-top: 30px">
           <el-card shadow="never">
             <div>
               //TODO: 个人简介
@@ -62,15 +62,15 @@
                   :key="tag.tagId"
                   size="mini"
                   :style="{
-                      'padding':'5px 5px',
+                    padding: '5px 5px',
                     'margin-left': '5px',
                     'margin-top': '5px',
                     width: '152px',
                     'text-align': 'left',
                     'font-size': '12px',
                     'background-color': tagColor[tagList.indexOf(tag) % 5],
-                    color:'white',
-                    'border-width':'0px'
+                    color: 'white',
+                    'border-width': '0px'
                   }"
                   >{{ tag.tagContent }}[{{ tag.relativeNum }}]</el-button
                 >
@@ -93,7 +93,13 @@ export default {
       articleInfoList: [],
       tagList: [],
       orderBy: "publishDate",
-      tagColor: ["#ff0000", "rgba(253,88,19,0.8)", "#fcbf28", "#26b420", "#0090ff"]
+      tagColor: [
+        "#ff0000",
+        "rgba(253,88,19,0.8)",
+        "#fcbf28",
+        "#26b420",
+        "#0090ff"
+      ]
     };
   },
   methods: {
@@ -127,9 +133,9 @@ export default {
     this.initData();
     this.getTags();
   },
-    components:{
-      ArticleInfo
-    }
+  components: {
+    ArticleInfo
+  }
 };
 </script>
 

@@ -17,5 +17,9 @@ public interface ClickService {
      */
     void countClickNums(int articleId,String ipAddress);
 
-
+    /**
+     * 删除文章时应该也删除相关的点击记录
+     * @param articleId
+     */
+    void deleteClickList(int articleId);
 }

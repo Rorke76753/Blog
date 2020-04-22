@@ -40,12 +40,10 @@ public class ArticleUtil {
         List<ArticleAndTag> relativeList = articleAndTagDao.findAllByArticleId(articleId);
         if (!relativeList.isEmpty()) {
             Set<Tag> oldTagSet = new HashSet<>();
-            //将旧的关系加入set中
             for (ArticleAndTag relation : relativeList) {
                 Tag tag = tagDao.findByTagId(relation.getTagId());
                 oldTagSet.add(tag);
             }
-            //找出tagList中出现过的旧的标签
             List<Tag> oldTags = new ArrayList<>();
             for (Tag tag : tagList) {
                 if (oldTagSet.contains(tag)) {
@@ -53,17 +51,10 @@ public class ArticleUtil {
                     oldTagSet.remove(tag);
                 }
             }
-            //去除tagList中旧的tag
             for (Tag tag : oldTags) {
                 tagList.remove(tag);
             }
-
-            //建立新的关系
-
             saveNewRelation(articleId, tagList, tagDao, articleAndTagDao);
-
-            //删除旧的关系
-
             deleteOldRelation(articleId, oldTagSet.iterator(), tagDao, articleAndTagDao);
 
         } else {

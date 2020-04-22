@@ -3,6 +3,7 @@ package edu.rorke.blog.background.controller;
 import edu.rorke.blog.background.entity.ArticleInfo;
 import edu.rorke.blog.background.entity.dto.ArticleDynamicSearch;
 import edu.rorke.blog.background.service.ArticleListService;
+import edu.rorke.blog.background.service.ClickService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -18,14 +19,19 @@ import java.time.LocalDate;
 @RequestMapping("/api/articles")
 public class ArticleListController {
     private final ArticleListService articleListService;
+    private final ClickService clickService;
 
-    @Autowired
-    public ArticleListController(ArticleListService articleListService) {
+    public ArticleListController(ArticleListService articleListService, ClickService clickService) {
         this.articleListService = articleListService;
+        this.clickService = clickService;
     }
 
     @DeleteMapping
     public Integer[] deleteMultipleArticles(@RequestParam Integer[] articleIds){
+        for (Integer i :
+                articleIds) {
+            clickService.deleteClickList(i);
+        }
         return articleListService.deleteMultipleById(articleIds);
     }
 

@@ -4,6 +4,7 @@ import edu.rorke.blog.background.entity.ArticleContent;
 import edu.rorke.blog.background.entity.ArticleInfo;
 import edu.rorke.blog.background.entity.dto.Article;
 import edu.rorke.blog.background.service.ArticleService;
+import edu.rorke.blog.background.service.ClickService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -17,10 +18,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/article")
 public class ArticleController {
     private final ArticleService articleService;
+    private final ClickService clickService;
 
     @Autowired
-    public ArticleController(ArticleService articleService) {
+    public ArticleController(ArticleService articleService, ClickService clickService) {
         this.articleService = articleService;
+        this.clickService = clickService;
     }
 
     @GetMapping("/{articleId}")
@@ -45,5 +48,6 @@ public class ArticleController {
     @DeleteMapping("/{articleId}")
     public void deleteArticle(@PathVariable int articleId){
         articleService.deleteByArticleId(articleId);
+        clickService.deleteClickList(articleId);
     }
 }

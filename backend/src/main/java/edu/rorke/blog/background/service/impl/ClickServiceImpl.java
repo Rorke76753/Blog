@@ -7,10 +7,8 @@ import edu.rorke.blog.background.repository.AttributeDao;
 import edu.rorke.blog.background.repository.TagDao;
 import edu.rorke.blog.background.service.ClickService;
 import edu.rorke.blog.background.util.CacheUtil;
-import io.lettuce.core.RedisCommandExecutionException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
 import java.util.*;
@@ -41,46 +39,27 @@ public class ClickServiceImpl implements ClickService {
 
     @Override
     public void countClickNums(int articleId, String ipAddress) {
-        String cacheKey = CacheUtil.CLICK_PREFIX + articleId + CacheUtil.CLICK_SUFFIX;
-        try{
-            List<Serializable> list = redisTemplate.opsForList().range(cacheKey,0,-1);
-            assert list != null;
+        String clickListKey = CacheUtil.CLICK_PREFIX + articleId + CacheUtil.CLICK_SUFFIX;
+        List<String> list = CacheUtil.getRedisList(String.class,clickListKey,redisTemplate,tagDao,articleAndTagDao,attributeDao);
+        if(list.size()!=0){
             if(!list.contains(ipAddress)){
                 if (list.size() >= CacheUtil.RECENT_VIEW_LIST_SIZE) {
-                    redisTemplate.opsForList().leftPop(cacheKey);
+                    redisTemplate.opsForList().leftPop(clickListKey);
                 }
-                redisTemplate.opsForList().rightPush(cacheKey,ipAddress);
+                redisTemplate.opsForList().rightPush(clickListKey,ipAddress);
                 increaseClickNum(articleId);
             }
-        }catch (RedisCommandExecutionException e){
-            redisTemplate.opsForList().leftPush(cacheKey,ipAddress);
+        }else {
+            redisTemplate.opsForList().leftPush(clickListKey,ipAddress);
             increaseClickNum(articleId);
         }
     }
 
-    /**
-     * 更新推荐列表
-     * @param articleInfo 文章信息
-     */
-    @Transactional(rollbackFor = Exception.class)
-    protected void updateRecommend(ArticleInfo articleInfo) {
-        articleInfo.calculatePriority();
-        List<ArticleInfo> infoList = CacheUtil.getRedisList(ArticleInfo.class,CacheUtil.ARTICLE_RECOMMEND,redisTemplate,tagDao,articleAndTagDao,attributeDao);
-        if(infoList.size()!=0) {
-            if(!infoList.contains(articleInfo)) {
-                infoList.add(articleInfo);
-            }
-            infoList.sort(ArticleInfo::compareTo);
-            int popCnt = Math.toIntExact(redisTemplate.opsForList().size(CacheUtil.ARTICLE_RECOMMEND));
-            for (int i = 0; i < popCnt; i++) {
-                redisTemplate.opsForList().leftPop(CacheUtil.ARTICLE_RECOMMEND);
-                redisTemplate.opsForList().rightPush(CacheUtil.ARTICLE_RECOMMEND,infoList.get(i));
-            }
-            if(popCnt<CacheUtil.RECOMMEND_LIST_SIZE&&popCnt<infoList.size()){
-                redisTemplate.opsForList().rightPush(CacheUtil.ARTICLE_RECOMMEND,infoList.get(popCnt));
-            }
-        }else {
-            redisTemplate.opsForList().leftPush(CacheUtil.ARTICLE_RECOMMEND, articleInfo);
+    @Override
+    public void deleteClickList(int articleId) {
+        String clickListKey = CacheUtil.CLICK_PREFIX + articleId + CacheUtil.CLICK_SUFFIX;
+        if(Objects.equals(redisTemplate.hasKey(clickListKey),Boolean.TRUE)){
+            redisTemplate.delete(clickListKey);
         }
     }
 
@@ -91,7 +70,7 @@ public class ClickServiceImpl implements ClickService {
             int clickNum = articleInfo.getClickNum() + 1;
             articleInfo.setClickNum(clickNum);
             articleInfoDao.save(articleInfo);
-            updateRecommend(articleInfo);
+            CacheUtil.updateRecommend(articleInfo,redisTemplate,tagDao,articleAndTagDao,attributeDao);
         });
     }
 }

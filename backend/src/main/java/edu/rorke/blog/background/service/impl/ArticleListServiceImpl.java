@@ -1,5 +1,9 @@
 package edu.rorke.blog.background.service.impl;
 
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.*;
+import javax.persistence.criteria.Predicate;
 import edu.rorke.blog.background.entity.ArticleInfo;
 import edu.rorke.blog.background.repository.ArticleAndTagDao;
 import edu.rorke.blog.background.repository.ArticleInfoDao;
@@ -15,11 +19,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.criteria.Predicate;
-import java.io.Serializable;
-import java.time.LocalDate;
-import java.util.*;
 
 /**
  * @author Rorke
@@ -51,16 +50,17 @@ public class ArticleListServiceImpl implements ArticleListService {
         int isDelete = 1;
         List<Integer> success = new ArrayList<>();
         List<ArticleInfo> infos = articleInfoDao.findAllById(Arrays.asList(articleIds));
-        for (ArticleInfo info:infos) {
+        for (ArticleInfo info : infos) {
             info.setIsDelete(1);
             int attributeId = info.getAttributeId();
-            ArticleUtil.modifyAttributeRelativeNum(attributeId,-1,attributeDao);
-            ArticleUtil.modifyTagRelativeNum(info.getArticleId(),-1,tagDao,articleAndTagDao);
+            ArticleUtil.modifyAttributeRelativeNum(attributeId, -1, attributeDao);
+            ArticleUtil.modifyTagRelativeNum(info.getArticleId(), -1, tagDao, articleAndTagDao);
             info.setIsDelete(isDelete);
             articleInfoDao.save(info);
-            CacheUtil.deleteRecommend(info,redisTemplate,tagDao,articleAndTagDao,attributeDao);
             success.add(info.getArticleId());
         }
+        CacheUtil.deleteElementOfKeyList(CacheUtil.ARTICLE_RECOMMEND, redisTemplate, tagDao, articleAndTagDao, attributeDao, infos.toArray(new ArticleInfo[0]));
+        CacheUtil.deleteElementOfKeyList(CacheUtil.ARTICLE_RECENT, redisTemplate, tagDao, articleAndTagDao, attributeDao, infos.toArray(new ArticleInfo[0]));
         return success.toArray(new Integer[0]);
     }
 
@@ -68,32 +68,31 @@ public class ArticleListServiceImpl implements ArticleListService {
     public Page<ArticleInfo> dynamicSearch(String title, Integer attributeId, LocalDate startDate, LocalDate endDate, int page, int pageSize, String orderBy) {
         Specification<ArticleInfo> specification = (Specification<ArticleInfo>) (root, query, criteriaBuilder) -> {
             List<Predicate> predicateList = new ArrayList<>();
-            predicateList.add(criteriaBuilder.equal(root.get("isDelete"),0));
-            if(title!=null&&!title.isEmpty()){
+            predicateList.add(criteriaBuilder.equal(root.get("isDelete"), 0));
+            if (title != null && !title.isEmpty()) {
                 //TODO:根据阿里代码规范不应该出现全模糊搜索
-                predicateList.add(criteriaBuilder.like(root.get("title"),"%"+title+"%"));
+                predicateList.add(criteriaBuilder.like(root.get("title"), "%" + title + "%"));
             }
-            if(attributeId!=null&&attributeId!=0){
-                predicateList.add(criteriaBuilder.equal(root.get("attributeId"),attributeId));
+            if (attributeId != null && attributeId != 0) {
+                predicateList.add(criteriaBuilder.equal(root.get("attributeId"), attributeId));
             }
-            if(startDate!=null&&endDate!=null){
-                predicateList.add(criteriaBuilder.between(root.get("publishDate"),startDate,endDate));
+            if (startDate != null && endDate != null) {
+                predicateList.add(criteriaBuilder.between(root.get("publishDate"), startDate, endDate));
             }
             return criteriaBuilder.and(predicateList.toArray(new Predicate[0]));
         };
         Sort.Direction direction = Sort.Direction.DESC;
-        if(orderBy==null||orderBy.isEmpty()){
+        if (orderBy == null || orderBy.isEmpty()) {
             orderBy = "articleId";
             direction = Sort.Direction.ASC;
         }
         Page<ArticleInfo> articleInfos =
-                articleInfoDao.
-                        findAll(specification,
-                                PaginationUtil.defaultSortedPageRequest(page,pageSize,orderBy,direction));
-        for (ArticleInfo articleInfo :
-                articleInfos) {
-            ArticleUtil.setAttributeName(articleInfo,attributeDao);
-            ArticleUtil.appendTags(articleInfo,tagDao,articleAndTagDao);
+                articleInfoDao
+                        .findAll(specification,
+                                PaginationUtil.defaultSortedPageRequest(page, pageSize, orderBy, direction));
+        for (ArticleInfo articleInfo : articleInfos) {
+            ArticleUtil.setAttributeName(articleInfo, attributeDao);
+            ArticleUtil.appendTags(articleInfo, tagDao, articleAndTagDao);
         }
         return articleInfos;
     }

@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
-import java.util.Objects;
 import java.util.Optional;
 
 
@@ -51,7 +50,7 @@ public class ArticleServiceImpl implements ArticleService {
         articleContent.setArticleId(id);
         ArticleUtil.saveTags(id, articleInfo.getTagList(),tagDao,articleAndTagDao);
         ArticleUtil.modifyAttributeRelativeNum(articleInfo.getAttributeId(),1,attributeDao);
-        CacheUtil.updateRecentArticle(articleInfo,redisTemplate);
+        CacheUtil.saveRecentArticle(articleInfo,redisTemplate);
         return saveNewArticleContent(articleContent);
     }
 
@@ -87,7 +86,8 @@ public class ArticleServiceImpl implements ArticleService {
             ArticleUtil.modifyTagRelativeNum(articleId,-1,tagDao,articleAndTagDao);
             articleInfo.setIsDelete(1);
             articleInfoDao.save(articleInfo);
-            CacheUtil.deleteRecommend(articleInfo,redisTemplate,tagDao,articleAndTagDao,attributeDao);
+            CacheUtil.deleteElementOfKeyList(CacheUtil.ARTICLE_RECOMMEND,redisTemplate,tagDao,articleAndTagDao,attributeDao,articleInfo);
+            CacheUtil.deleteElementOfKeyList(CacheUtil.ARTICLE_RECENT,redisTemplate,tagDao,articleAndTagDao,attributeDao,articleInfo);
         });
     }
 

@@ -47,22 +47,18 @@ export default {
   data() {
     return {
       articleInfo: {},
-      articleId: "",
       recommendList: []
     };
   },
   created() {
-    console.log(this.$route.params.articleInfo);
+
     if (this.$route.params.articleInfo) {
       this.articleInfo = this.$route.params.articleInfo;
       sessionStorage.setItem("articleInfo", JSON.stringify(this.articleInfo));
     } else {
       this.articleInfo = JSON.parse(sessionStorage.getItem("articleInfo"));
     }
-    this.articleId = this.$route.params.articleId;
     this.getContent();
-  },
-  mounted() {
     this.getRecommend();
   },
   methods: {
@@ -85,7 +81,6 @@ export default {
       if (articleInfo.articleId !== this.$route.params.articleId) {
         this.articleInfo = articleInfo;
         axios.get("/click/" + articleInfo.articleId);
-        this.getContent();
         this.$router.push({
           name: "articleContent",
           params: {
@@ -93,6 +88,7 @@ export default {
             articleInfo: articleInfo
           }
         });
+        this.getContent();
       }
     }
   }
