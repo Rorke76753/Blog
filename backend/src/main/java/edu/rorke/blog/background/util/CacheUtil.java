@@ -19,8 +19,7 @@ import java.util.Objects;
 
 public class CacheUtil {
     public static final Integer RECENT_VIEW_LIST_SIZE = 100;
-    public static final Integer RECOMMEND_LIST_SIZE = 5;
-    public static final Integer RECENT_LIST_SIZE = 5;
+    public static final Integer ASIDE_LIST_SIZE = 5;
     public static final String CLICK_PREFIX = "ARTICLE_";
     public static final String CLICK_SUFFIX = "_CLICK_IP";
     public static final String ARTICLE_RECOMMEND = "ARTICLE_RECOMMEND";
@@ -89,8 +88,11 @@ public class CacheUtil {
 
     /**
      * 更新推荐列表
-     *
-     * @param articleInfo 文章信息
+     * @param articleInfo      文章信息
+     * @param redisTemplate
+     * @param tagDao
+     * @param articleAndTagDao
+     * @param attributeDao
      */
     public static void updateRecommend(ArticleInfo articleInfo,
                                        RedisTemplate<String, Serializable> redisTemplate,
@@ -109,7 +111,7 @@ public class CacheUtil {
                 redisTemplate.opsForList().leftPop(ARTICLE_RECOMMEND);
                 redisTemplate.opsForList().rightPush(ARTICLE_RECOMMEND, infoList.get(i));
             }
-            if (popCnt < RECOMMEND_LIST_SIZE && popCnt < infoList.size()) {
+            if (popCnt < ASIDE_LIST_SIZE && popCnt < infoList.size()) {
                 redisTemplate.opsForList().rightPush(ARTICLE_RECOMMEND, infoList.get(popCnt));
             }
         } else {
@@ -117,10 +119,47 @@ public class CacheUtil {
         }
     }
 
-    public static void saveRecentArticle(ArticleInfo articleInfo, RedisTemplate<String, Serializable> redisTemplate) {
+    /**
+     *
+     * @param articleInfo
+     * @param redisTemplate
+     * @param tagDao
+     * @param articleAndTagDao
+     * @param attributeDao
+     */
+    public static void updateRecentArticle(@NotNull ArticleInfo articleInfo,
+                                           RedisTemplate<String, Serializable> redisTemplate,
+                                           TagDao tagDao,
+                                           ArticleAndTagDao articleAndTagDao,
+                                           AttributeDao attributeDao) {
+        articleInfoOperation(articleInfo, tagDao, articleAndTagDao, attributeDao);
+        List<ArticleInfo> infoList = getRedisList(ArticleInfo.class, ARTICLE_RECENT, redisTemplate, tagDao, articleAndTagDao, attributeDao);
+        for (ArticleInfo info : infoList) {
+            redisTemplate.opsForList().leftPop(ARTICLE_RECENT);
+            if (info.equals(articleInfo)) {
+                redisTemplate.opsForList().rightPush(ARTICLE_RECENT, articleInfo);
+            }
+            redisTemplate.opsForList().rightPush(ARTICLE_RECENT, info);
+        }
+    }
+
+    /**
+     *
+     * @param articleInfo
+     * @param redisTemplate
+     * @param tagDao
+     * @param articleAndTagDao
+     * @param attributeDao
+     */
+    public static void saveRecentArticle(ArticleInfo articleInfo,
+                                         RedisTemplate<String, Serializable> redisTemplate,
+                                         TagDao tagDao,
+                                         ArticleAndTagDao articleAndTagDao,
+                                         AttributeDao attributeDao) {
+        articleInfoOperation(articleInfo,tagDao,articleAndTagDao,attributeDao);
         if (Objects.equals(redisTemplate.hasKey(ARTICLE_RECENT), Boolean.TRUE)) {
             int cacheRecentSize = Math.toIntExact(redisTemplate.opsForList().size(ARTICLE_RECENT));
-            if (cacheRecentSize == RECENT_LIST_SIZE) {
+            if (cacheRecentSize == ASIDE_LIST_SIZE) {
                 redisTemplate.opsForList().leftPop(ARTICLE_RECENT);
             }
         }

@@ -50,8 +50,7 @@ public class TagServiceImpl implements TagService {
     public List<ArticleInfo> getRelativeArticleInfo(int tagId) {
         List<ArticleAndTag> relations = articleAndTagDao.findAllByTagId(tagId);
         List<Integer> articleId = new ArrayList<>();
-        for (ArticleAndTag relation :
-                relations) {
+        for (ArticleAndTag relation : relations) {
             articleId.add(relation.getArticleId());
         }
         List<ArticleInfo> infos = articleInfoDao.findAllById(articleId);

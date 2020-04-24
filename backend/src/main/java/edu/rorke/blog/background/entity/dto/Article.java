@@ -14,7 +14,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Article {
+public class Article extends ClientInfo{
     private int articleId;
     private String title;
     private String description;

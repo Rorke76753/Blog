@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ArticleDynamicSearch {
+public class ArticleDynamicSearch extends ClientInfo{
     private Integer page;
     private Integer pageSize;
     private String title;

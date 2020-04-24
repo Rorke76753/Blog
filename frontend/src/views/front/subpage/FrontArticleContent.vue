@@ -8,21 +8,29 @@
         ></ArticleContent
       ></el-col>
       <el-col :span="7">
-        <div style="padding-left: 100px;width: 360px;margin-top: 30px">
+        <div style="padding-left: 100px;width: 82%;margin-top: 30px">
           <div>
             <div style="border-left: #0088ff 5px solid;padding-left: 20px">
               <h3>最近发表</h3>
             </div>
-            //正在开发中^^
+            <div v-for="recentInfo in recentList"
+                 :key="recentInfo.articleId">
+              <el-link
+                @click="jumpTo(recentInfo)"
+                style="padding-left: 20px;padding-top: 10px"
+                >【{{ recentInfo.attributeName }}】{{
+                  recentInfo.title
+                }}</el-link
+              >
+            </div>
           </div>
           <div>
             <div style="border-left: #0088ff 5px solid;padding-left: 20px">
               <h3>推荐阅读</h3>
             </div>
-            <div>
+            <div v-for="recommendInfo in recommendList"
+                 :key="recommendInfo.articleId">
               <el-link
-                v-for="recommendInfo in recommendList"
-                :key="recommendInfo.articleId"
                 @click="jumpTo(recommendInfo)"
                 style="padding-left: 20px;padding-top: 10px"
               >
@@ -47,11 +55,11 @@ export default {
   data() {
     return {
       articleInfo: {},
-      recommendList: []
+      recommendList: [],
+      recentList: []
     };
   },
   created() {
-
     if (this.$route.params.articleInfo) {
       this.articleInfo = this.$route.params.articleInfo;
       sessionStorage.setItem("articleInfo", JSON.stringify(this.articleInfo));
@@ -60,6 +68,7 @@ export default {
     }
     this.getContent();
     this.getRecommend();
+    this.getRecent();
   },
   methods: {
     getContent() {
@@ -74,6 +83,13 @@ export default {
       axios.get("/recommend").then(res => {
         if (res.status === 200) {
           this.recommendList = res.data;
+        }
+      });
+    },
+    getRecent() {
+      axios.get("/recent").then(res => {
+        if (res.status === 200) {
+          this.recentList = res.data;
         }
       });
     },

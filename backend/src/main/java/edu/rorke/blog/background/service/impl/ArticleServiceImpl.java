@@ -11,8 +11,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import sun.misc.Cache;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Optional;
 
 
@@ -50,7 +52,7 @@ public class ArticleServiceImpl implements ArticleService {
         articleContent.setArticleId(id);
         ArticleUtil.saveTags(id, articleInfo.getTagList(),tagDao,articleAndTagDao);
         ArticleUtil.modifyAttributeRelativeNum(articleInfo.getAttributeId(),1,attributeDao);
-        CacheUtil.saveRecentArticle(articleInfo,redisTemplate);
+        CacheUtil.saveRecentArticle(articleInfo,redisTemplate,tagDao,articleAndTagDao,attributeDao);
         return saveNewArticleContent(articleContent);
     }
 
@@ -72,7 +74,9 @@ public class ArticleServiceImpl implements ArticleService {
             }
             BeanUtils.copyProperties(article,tmpInfo);
             BeanUtils.copyProperties(article,tmpContent);
+            tmpInfo.setLastUpdate(LocalDate.now());
             saveNewArticle(tmpInfo,tmpContent);
+            CacheUtil.updateRecentArticle(tmpInfo,redisTemplate,tagDao,articleAndTagDao,attributeDao);
         }
         return Boolean.TRUE;
     }
@@ -94,6 +98,9 @@ public class ArticleServiceImpl implements ArticleService {
 
 
     private Integer saveNewArticleInfo(ArticleInfo articleInfo) {
+        if(articleInfo.getLastUpdate()==null){
+            articleInfo.setLastUpdate(articleInfo.getPublishDate());
+        }
         return articleInfoDao.save(articleInfo).getArticleId();
     }
 

@@ -35,7 +35,6 @@ public class ArticleInfo implements Serializable,Comparable<ArticleInfo> {
     private String description;
     @CreatedDate
     private LocalDate publishDate;
-    @LastModifiedDate
     private LocalDate lastUpdate;
     private int clickNum;
     private int likeNum;

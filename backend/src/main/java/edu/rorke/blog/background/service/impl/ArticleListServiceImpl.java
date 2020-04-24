@@ -59,8 +59,9 @@ public class ArticleListServiceImpl implements ArticleListService {
             articleInfoDao.save(info);
             success.add(info.getArticleId());
         }
-        CacheUtil.deleteElementOfKeyList(CacheUtil.ARTICLE_RECOMMEND, redisTemplate, tagDao, articleAndTagDao, attributeDao, infos.toArray(new ArticleInfo[0]));
-        CacheUtil.deleteElementOfKeyList(CacheUtil.ARTICLE_RECENT, redisTemplate, tagDao, articleAndTagDao, attributeDao, infos.toArray(new ArticleInfo[0]));
+        ArticleInfo[] articleInfos = infos.toArray(new ArticleInfo[0]);
+        CacheUtil.deleteElementOfKeyList(CacheUtil.ARTICLE_RECOMMEND, redisTemplate, tagDao, articleAndTagDao, attributeDao, articleInfos);
+        CacheUtil.deleteElementOfKeyList(CacheUtil.ARTICLE_RECENT, redisTemplate, tagDao, articleAndTagDao, attributeDao, articleInfos);
         return success.toArray(new Integer[0]);
     }
 
@@ -68,9 +69,10 @@ public class ArticleListServiceImpl implements ArticleListService {
     public Page<ArticleInfo> dynamicSearch(String title, Integer attributeId, LocalDate startDate, LocalDate endDate, int page, int pageSize, String orderBy) {
         Specification<ArticleInfo> specification = (Specification<ArticleInfo>) (root, query, criteriaBuilder) -> {
             List<Predicate> predicateList = new ArrayList<>();
+            //it is not deleted
             predicateList.add(criteriaBuilder.equal(root.get("isDelete"), 0));
+
             if (title != null && !title.isEmpty()) {
-                //TODO:根据阿里代码规范不应该出现全模糊搜索
                 predicateList.add(criteriaBuilder.like(root.get("title"), "%" + title + "%"));
             }
             if (attributeId != null && attributeId != 0) {

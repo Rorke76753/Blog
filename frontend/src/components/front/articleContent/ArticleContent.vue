@@ -107,7 +107,7 @@ export default {
 <style scoped>
 .contentClass {
   height: 100%;
-  width: 80%;
+  width:80%;
   margin-left: 22%;
   margin-top: 30px;
 }

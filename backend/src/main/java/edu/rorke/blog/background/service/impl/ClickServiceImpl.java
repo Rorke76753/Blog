@@ -41,18 +41,15 @@ public class ClickServiceImpl implements ClickService {
     public void countClickNums(int articleId, String ipAddress) {
         String clickListKey = CacheUtil.CLICK_PREFIX + articleId + CacheUtil.CLICK_SUFFIX;
         List<String> list = CacheUtil.getRedisList(String.class,clickListKey,redisTemplate,tagDao,articleAndTagDao,attributeDao);
-        if(list.size()!=0){
-            if(!list.contains(ipAddress)){
-                if (list.size() >= CacheUtil.RECENT_VIEW_LIST_SIZE) {
-                    redisTemplate.opsForList().leftPop(clickListKey);
-                }
-                redisTemplate.opsForList().rightPush(clickListKey,ipAddress);
-                increaseClickNum(articleId);
-            }
-        }else {
-            redisTemplate.opsForList().leftPush(clickListKey,ipAddress);
+        boolean containsFlag = list.contains(ipAddress);
+        if(!containsFlag){
+            redisTemplate.opsForList().rightPush(clickListKey, ipAddress);
             increaseClickNum(articleId);
+            if (list.size() >= CacheUtil.RECENT_VIEW_LIST_SIZE) {
+                redisTemplate.opsForList().leftPop(clickListKey);
+            }
         }
+
     }
 
     @Override

@@ -32,10 +32,10 @@
           </el-card>
         </div>
         <el-pagination
-          :page-size="20"
-          :pager-count="11"
+          :page-size="pageSize"
+          :page-count="totalPage"
           layout="prev, pager, next"
-          :total="1000"
+          :total="totalElements"
           style="margin-left: 50%;margin-top: 30px"
         >
         </el-pagination>
@@ -53,10 +53,12 @@
           </el-card>
           <div>
             <div>
-              <div style="border-left: #0088ff 5px solid;padding-left: 20px">
+              <div
+                style="border-left: #0088ff 5px solid;padding-left: 20px;margin-top: 20px"
+              >
                 <h3>标签墙</h3>
               </div>
-              <p style="padding-left: 20px">
+              <p style="padding-left: 20px;padding-top: 20px">
                 <el-button
                   v-for="tag in tagList"
                   :key="tag.tagId"
@@ -86,6 +88,8 @@
 <script>
 import axios from "axios";
 import ArticleInfo from "../../../components/front/articleInfo/ArticleInfo";
+import { GetCurrentBrowser } from "../../../assets/ClientInfo";
+
 export default {
   name: "FrontArticleInfo",
   data() {
@@ -99,19 +103,29 @@ export default {
         "#fcbf28",
         "#26b420",
         "#0090ff"
-      ]
+      ],
+      currentPage: 1,
+      pageSize: 10,
+      totalElements: 1,
+      totalPage: 1
     };
   },
   methods: {
+    getBrowser: function() {
+      sessionStorage.setItem("browser", GetCurrentBrowser());
+    },
     initData() {
+      this.getBrowser();
       axios
         .post("/articles", {
           page: 1,
-          pageSize: 10,
+          pageSize: this.pageSize,
           orderBy: this.orderBy
         })
         .then(res => {
           this.articleInfoList = res.data.content;
+          this.totalElements = res.data.totalElements;
+          this.totalPage = res.data.totalPage;
         });
     },
     sortArticleInfo(orderBy) {
@@ -142,7 +156,6 @@ export default {
 <style scoped>
 .emptyCard {
   height: 100%;
-  width: 80%;
   margin-left: 22%;
   margin-top: 30px;
 }

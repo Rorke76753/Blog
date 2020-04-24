@@ -18,7 +18,7 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: "/admin",
-    redirect: "/admin/homepage",
+    redirect: "/admin/articles",
     component: Admin,
     // beforeEnter: (to, from, next) => {
     //   console.log(to, from, next);
@@ -94,9 +94,11 @@ const routes = [
       }
     ]
   }
-];
+]
+;
 
 const router = new VueRouter({
+  mode:'history',
   routes
 });
 

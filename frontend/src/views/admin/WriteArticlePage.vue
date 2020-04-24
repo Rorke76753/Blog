@@ -80,7 +80,7 @@ export default {
       this.description = this.$refs.description.getData();
       this.article = this.$refs.editor.getData();
       this.tags = this.$refs.tagsInput.getData();
-      let putUrl = axios.defaults.baseURL + "/articleInfo";
+      let putUrl = axios.defaults.baseURL + "/article";
       axios
         .post(putUrl, {
           title: this.title,

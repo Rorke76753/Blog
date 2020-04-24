@@ -19,7 +19,7 @@
       </el-col>
       <el-col :span="6">
         <el-link icon="el-icon-s-tools" class="linkClass" @click="jumpTo('index')">博客</el-link>
-        <el-link icon="el-icon-collection-tag" class="linkClass">归档</el-link>
+        <el-link icon="el-icon-collection-tag" class="linkClass">标签</el-link>
         <el-link icon="el-icon-date" class="linkClass" @click="jumpTo('articleTimeLine')">时间轴</el-link>
         <el-link icon="el-icon-position" class="linkClass">关于我</el-link>
       </el-col>
