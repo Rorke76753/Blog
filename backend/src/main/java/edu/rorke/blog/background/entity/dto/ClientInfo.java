@@ -12,7 +12,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ClientInfo {
-    public String ip;
-    public String browser;
-    public String cityName;
+    protected String ip;
+    protected String browser;
+    protected String cityName;
+    protected String accessToken;
 }

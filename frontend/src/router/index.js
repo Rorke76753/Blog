@@ -13,60 +13,85 @@ import FrontIndex from "../views/front/FrontIndex";
 import FrontArticleContent from "../views/front/subpage/FrontArticleContent";
 import FrontArticleInfo from "../views/front/subpage/FrontArticleInfo";
 import FrontTimeLine from "../views/front/subpage/FrontTimeLine";
+import LoginPage from "../views/admin/LoginPage";
+import Authenticating from "../views/admin/Authenticating";
 Vue.use(VueRouter);
 
 const routes = [
   {
+    path: "/login",
+    component: LoginPage
+  },
+  {
     path: "/admin",
     redirect: "/admin/articles",
     component: Admin,
-    // beforeEnter: (to, from, next) => {
-    //   console.log(to, from, next);
-    //   if (to) {
-    //     next(false);
-    //   } else {
-    //     next();
-    //   }
-    // },
+    meta: {
+      requireAuth: true
+    },
     children: [
       {
         path: "/admin/articles",
         name: "文章管理",
+        meta: {
+          requireAuth: true
+        },
         component: ArticleListPage
       },
       {
         path: "/admin/articleInfo",
         name: "ArticleManagementPage",
+        meta: {
+          requireAuth: true
+        },
         component: ArticleManagementPage
       },
       {
         path: "/admin/tags",
         name: "标签管理",
+        meta: {
+          requireAuth: true
+        },
         component: TagManagementPage
       },
       {
         path: "/admin/comments",
         name: "文章选择",
+        meta: {
+          requireAuth: true
+        },
         component: ArticlesChoicePage
       },
       {
         path: "/admin/comments/:articleId",
         name: "评论管理",
+        meta: {
+          requireAuth: true
+        },
         component: CommentManagementPage
       },
       {
         path: "/admin/operationLog",
         name: "操作日志",
+        meta: {
+          requireAuth: true
+        },
         component: OperationLog
       },
       {
         path: "/admin/loginLog",
         name: "登录日志",
+        meta: {
+          requireAuth: true
+        },
         component: LoginLog
       },
       {
         path: "/admin/writeArticle",
         name: "写文章",
+        meta: {
+          requireAuth: true
+        },
         component: WriteArticlePage
       }
     ]
@@ -88,18 +113,57 @@ const routes = [
         component: FrontArticleContent
       },
       {
-        path:"/timeline",
+        path: "/timeline",
         name: "articleTimeLine",
         component: FrontTimeLine
       }
     ]
+  },
+  {
+    path: "/authentication",
+    name: "验证",
+    component: Authenticating
   }
-]
-;
-
+];
 const router = new VueRouter({
-  mode:'history',
+  mode: "history",
   routes
 });
 
 export default router;
+import axios from "axios";
+router.beforeEach((to, from, next) => {
+  // 对 to.matched 数组中的每个路由调用箭头函数
+  if (to.meta.requireAuth) {
+    // 判断登录状态
+    if (sessionStorage.getItem("token")) {
+      // 继续路由
+      let token = sessionStorage.getItem("token");
+      axios
+        .get("/login/validate", {
+          params:{
+            token: token
+          }
+        })
+        .then(res => {
+          if (res.status === 200 && res.data === true) {
+            next();
+          } else {
+            next({
+              path: "/login",
+              query: { redirect: to.fullPath }
+            });
+          }
+        });
+    } else {
+      // 重定向到登录界面
+      next({
+        path: "/login",
+        query: { redirect: to.fullPath }
+      });
+    }
+  } else {
+    // 继续路由
+    next();
+  }
+});

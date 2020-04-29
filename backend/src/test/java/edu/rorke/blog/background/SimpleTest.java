@@ -4,6 +4,8 @@ import org.hibernate.result.Output;
 import org.hibernate.result.ResultSetOutput;
 import org.hibernate.result.internal.OutputsImpl;
 import org.junit.jupiter.api.Test;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import sun.security.provider.DSAPrivateKey;
 
 import java.util.Stack;
 
@@ -14,9 +16,6 @@ import java.util.Stack;
 public class SimpleTest {
     @Test
     void divideTest(){
-        Double test = 1.0D;
-        System.out.println(test*10);
-        Double test1 = 1.0001D;
-        System.out.println(test1*10);
+        System.out.println(new BCryptPasswordEncoder().encode("Fuck1998*"));
     }
 }

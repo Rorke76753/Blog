@@ -1,0 +1,42 @@
+<template>
+  <h1>Authenticating</h1>
+</template>
+
+<script>
+import axios from "axios";
+export default {
+  name: "Authenticating",
+  data() {
+    return {
+      code: "",
+      clientId: "",
+      clientSecret: "",
+      accessToken: ""
+    };
+  },
+  methods: {
+    authenticate() {
+      if (this.code) {
+        axios
+          .get("/login/oauth/callback", {
+            params: {
+              code: this.code
+            }
+          })
+          .then(res => {
+            if (res.status === 200) {
+              sessionStorage.setItem("access_token", res.data.access_token);
+              this.$router.push("/");
+            }
+          });
+      }
+    }
+  },
+  created() {
+    this.code = this.$route.query.code;
+    this.authenticate();
+  }
+};
+</script>
+
+<style scoped></style>

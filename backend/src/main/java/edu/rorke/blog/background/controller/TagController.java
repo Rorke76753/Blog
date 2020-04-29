@@ -29,21 +29,10 @@ public class TagController {
         return tagService.getRelativeArticleInfo(tagId);
     }
 
-    @PutMapping("/tag/{tagId}")
-    public Tag updateTagContent(@PathVariable int tagId,
-                                @RequestBody Tag newTag){
-        if(tagId == newTag.getTagId()) {
-            return tagService.updateTag(tagId, newTag);
-        }
-        return new Tag();
-    }
-
     @PostMapping("/tags")
     public Page<Tag> getTags(@RequestBody TagPagination tagPagination){
         int page = tagPagination.getPage();
         int pageSize = tagPagination.getPageSize();
         return tagService.getPaginationTags(page,pageSize);
     }
-
-
 }

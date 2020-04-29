@@ -19,20 +19,9 @@ import java.time.LocalDate;
 @RequestMapping("/api/articles")
 public class ArticleListController {
     private final ArticleListService articleListService;
-    private final ClickService clickService;
 
-    public ArticleListController(ArticleListService articleListService, ClickService clickService) {
+    public ArticleListController(ArticleListService articleListService) {
         this.articleListService = articleListService;
-        this.clickService = clickService;
-    }
-
-    @DeleteMapping
-    public Integer[] deleteMultipleArticles(@RequestParam Integer[] articleIds){
-        for (Integer i :
-                articleIds) {
-            clickService.deleteClickList(i);
-        }
-        return articleListService.deleteMultipleById(articleIds);
     }
 
     @PostMapping
