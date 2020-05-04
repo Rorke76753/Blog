@@ -13,6 +13,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -43,7 +44,10 @@ public class RecentArticleServiceImpl implements RecentArticleService {
     public List<ArticleInfo> getRecentArticleList() {
         List<ArticleInfo> infoList = CacheUtil.getRedisList(ArticleInfo.class,CacheUtil.ARTICLE_RECENT,redisTemplate,tagDao,articleAndTagDao,attributeDao);
         if(infoList.size()==0){
-            infoList = articleInfoDao.findAll(PaginationUtil.defaultSortedPageRequest(1,5,"publishDate", Sort.Direction.DESC)).toList();
+            infoList = articleInfoDao.findAllByIsDeleteLike(0,PaginationUtil.defaultSortedPageRequest(1,5,"publishDate", Sort.Direction.DESC)).toList();
+            infoList.sort((o1, o2) -> o1.getPublishDate().isEqual(o2.getPublishDate())?
+                    o2.getArticleId()-o1.getArticleId():
+                    (int) (o1.getPublishDate().toEpochDay() - o2.getPublishDate().toEpochDay()));
             for (ArticleInfo info: infoList) {
                 CacheUtil.saveRecentArticle(info,redisTemplate,tagDao,articleAndTagDao,attributeDao);
             }

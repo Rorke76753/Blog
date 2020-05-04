@@ -76,7 +76,10 @@ export default {
   methods: {
     getArticleContent(id) {
       let _this = this;
-      axios.get("/click/" + id);
+      axios.post("/click", {
+        articleId: id,
+        ip: sessionStorage.getItem("ip")
+      });
       this.$router.push({
         name: "articleContent",
         params: {

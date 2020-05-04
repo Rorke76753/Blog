@@ -1,6 +1,7 @@
 package edu.rorke.blog.background.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.tomcat.jni.Local;
@@ -25,6 +26,7 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Builder
 @Table(name = "tb_article_info")
 @EntityListeners(AuditingEntityListener.class)
 public class ArticleInfo implements Serializable,Comparable<ArticleInfo> {

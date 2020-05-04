@@ -38,4 +38,10 @@ public interface ArticleService {
      */
     void deleteByArticleId(int articleId);
 
+    /**
+     * 获得某一个文章的信息
+     * @param articleId 获得文章信息
+     * @return 文章信息
+     */
+    ArticleInfo getArticleInfoById(int articleId);
 }

@@ -13,8 +13,7 @@
             <div style="border-left: #0088ff 5px solid;padding-left: 20px">
               <h3>最近发表</h3>
             </div>
-            <div v-for="recentInfo in recentList"
-                 :key="recentInfo.articleId">
+            <div v-for="recentInfo in recentList" :key="recentInfo.articleId">
               <el-link
                 @click="jumpTo(recentInfo)"
                 style="padding-left: 20px;padding-top: 10px"
@@ -28,8 +27,10 @@
             <div style="border-left: #0088ff 5px solid;padding-left: 20px">
               <h3>推荐阅读</h3>
             </div>
-            <div v-for="recommendInfo in recommendList"
-                 :key="recommendInfo.articleId">
+            <div
+              v-for="recommendInfo in recommendList"
+              :key="recommendInfo.articleId"
+            >
               <el-link
                 @click="jumpTo(recommendInfo)"
                 style="padding-left: 20px;padding-top: 10px"
@@ -64,13 +65,25 @@ export default {
       this.articleInfo = this.$route.params.articleInfo;
       sessionStorage.setItem("articleInfo", JSON.stringify(this.articleInfo));
     } else {
-      this.articleInfo = JSON.parse(sessionStorage.getItem("articleInfo"));
+      this.getInfo();
     }
     this.getContent();
     this.getRecommend();
     this.getRecent();
   },
   methods: {
+    getInfo() {
+      let id = this.$route.params.articleId;
+      axios.get("/article/info/" + id).then(res => {
+        if (res.status === 200) {
+          this.articleInfo = res.data;
+          sessionStorage.setItem(
+            "articleInfo",
+            JSON.stringify(this.articleInfo)
+          );
+        }
+      });
+    },
     getContent() {
       axios.get("/article/" + this.$route.params.articleId).then(res => {
         if (res.status === 200) {
@@ -96,7 +109,10 @@ export default {
     jumpTo(articleInfo) {
       if (articleInfo.articleId !== this.$route.params.articleId) {
         this.articleInfo = articleInfo;
-        axios.get("/click/" + articleInfo.articleId);
+        axios.post("/click", {
+          articleId: articleInfo.articleId,
+          ip: sessionStorage.getItem("ip")
+        });
         this.$router.push({
           name: "articleContent",
           params: {

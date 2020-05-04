@@ -1,6 +1,7 @@
-package edu.rorke.blog.background.controller;
+package edu.rorke.blog.background.controller.front;
 
 import edu.rorke.blog.background.entity.ArticleContent;
+import edu.rorke.blog.background.entity.ArticleInfo;
 import edu.rorke.blog.background.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,11 @@ public class ArticleController {
     @Autowired
     public ArticleController(ArticleService articleService) {
         this.articleService = articleService;
+    }
+
+    @GetMapping("/info/{articleId}")
+    public ArticleInfo getArticleInfo(@PathVariable int articleId){
+        return articleService.getArticleInfoById(articleId);
     }
 
     @GetMapping("/{articleId}")

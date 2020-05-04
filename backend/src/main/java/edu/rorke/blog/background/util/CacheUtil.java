@@ -104,6 +104,8 @@ public class CacheUtil {
         if (infoList.size() != 0) {
             if (!infoList.contains(articleInfo)) {
                 infoList.add(articleInfo);
+            }else{
+                infoList.set(infoList.indexOf(articleInfo),articleInfo);
             }
             infoList.sort(ArticleInfo::compareTo);
             int popCnt = Math.toIntExact(redisTemplate.opsForList().size(ARTICLE_RECOMMEND));

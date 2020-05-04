@@ -5,7 +5,6 @@
     <el-button type="primary" @click="submitForm(username, password)"
       >提交</el-button
     >
-    <el-button type="primary" @click="loginWithGithub()">Login With GitHub</el-button>
   </div>
 </template>
 
@@ -37,17 +36,6 @@ export default {
             }
           }
         });
-    },
-      /*
-      scope:test
-      测试第三方登录
-       */
-    loginWithGithub(){
-      axios.get("http://localhost:7625/api/login/oauth").then(res => {
-        if(res.status===200){
-          window.location.href = res.data;
-        }
-      })
     }
   }
 };

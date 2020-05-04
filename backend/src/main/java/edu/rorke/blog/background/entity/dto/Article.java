@@ -3,6 +3,7 @@ package edu.rorke.blog.background.entity.dto;
 import edu.rorke.blog.background.entity.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
  * @author Rorke
  * @date 2020/4/6 21:02
  */
+@EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

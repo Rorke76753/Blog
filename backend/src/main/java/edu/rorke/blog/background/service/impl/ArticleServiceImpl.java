@@ -95,6 +95,16 @@ public class ArticleServiceImpl implements ArticleService {
         });
     }
 
+    @Override
+    public ArticleInfo getArticleInfoById(int articleId) {
+        Optional<ArticleInfo> notNull = articleInfoDao.findByArticleIdAndIsDelete(articleId,0);
+        ArticleInfo result = notNull.orElse(null);
+        if(result!=null){
+            ArticleUtil.appendTags(result,tagDao,articleAndTagDao);
+            ArticleUtil.setAttributeName(result,attributeDao);
+        }
+        return result;
+    }
 
 
     private Integer saveNewArticleInfo(ArticleInfo articleInfo) {

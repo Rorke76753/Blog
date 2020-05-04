@@ -1,7 +1,7 @@
 <template>
   <div class="contentClass">
     <el-card>
-      <p style="font-size: 30px;margin: 10px  0px">
+      <p style="font-size: 30px;margin: 10px  0">
         <b>【{{ articleInfo.attributeName }}】{{ articleInfo.title }}</b>
       </p>
       <el-button
@@ -50,16 +50,31 @@
       <el-divider></el-divider>
       <div class="commentForm">
         <div style="display: flex;justify-content: space-between">
-          <el-input v-model="nickName" placeholder="用户昵称"></el-input>
-          <el-input v-model="emailAddress" placeholder="联系邮箱"></el-input>
-          <el-tooltip
-            class="item"
-            effect="dark"
-            content="等待开发中"
-            placement="bottom"
-          >
-            <el-button type="primary" disabled>发表评论</el-button>
-          </el-tooltip>
+          <div style="align-content: center">
+            <div v-if="currentUserThirdPartyToken !== '' && isThirdPartyToken">
+              <el-avatar
+                :size="30"
+                :src="currentUserInfo.avatarUrl"
+              ></el-avatar>
+              <el-link
+                @click="visitThirdPartyUserInfo(currentUserInfo.htmlUrl)"
+                >{{ currentUserInfo.username }}</el-link
+              >
+            </div>
+            <div v-else>
+              <el-button type="primary" @click="loginWithGithub()"
+                >Login With GitHub</el-button
+              >
+            </div>
+          </div>
+          <div>
+            <el-button
+              v-show="currentUserThirdPartyToken !== '' && isThirdPartyToken"
+            ></el-button>
+          </div>
+        </div>
+        <div v-if="currentUserInfo.errorMessage !== null">
+          <span style="color: red"> {{ currentUserInfo.errorMessage }}</span>
         </div>
         <div style="padding-top:20px">
           <el-input
@@ -77,6 +92,7 @@
 
 <script>
 import Viewer from "@toast-ui/vue-editor/src/Viewer.vue";
+import axios from "axios";
 import "@toast-ui/editor/dist/toastui-editor-viewer.css";
 export default {
   name: "ArticleContent",
@@ -92,13 +108,58 @@ export default {
       color: ["OrangeRed", "orange", "#ffd152", "LimeGreen", "DodgerBlue"],
       nickName: "",
       emailAddress: "",
-      commentContent: ""
+      commentContent: "",
+      currentUserThirdPartyToken: "",
+      currentUserInfo: {},
+      platform: "",
+      isThirdPartyToken: false
     };
   },
   methods: {
     initContent(articleContent) {
       this.articleContent = articleContent;
       this.$refs.viewer.invoke("setMarkdown", this.articleContent);
+    },
+    validateThirdPartyToken() {
+      let thirdPartyToken = JSON.parse(sessionStorage.getItem("thirdPartyToken"));
+      axios
+        .post("/login/oauth/user", {
+          accessToken: thirdPartyToken.accessToken,
+          platform: thirdPartyToken.platform
+        })
+        .then(res => {
+          if (res.status === 200) {
+            if (res.data.errorMessage === null) {
+              this.isThirdPartyToken = true;
+            }
+            this.currentUserInfo = res.data;
+          }
+        });
+    },
+    visitThirdPartyUserInfo(htmlUrl) {
+      window.location.href = htmlUrl;
+    },
+    loginWithGithub() {
+      sessionStorage.setItem("afterLogin", this.$route.path);
+      axios.get("/login/oauth").then(res => {
+        if (res.status === 200) {
+          window.location.href = res.data;
+        }
+      });
+    }
+  },
+  created() {
+    if (
+      sessionStorage.getItem("thirdPartyToken") !== null &&
+      sessionStorage.getItem("thirdPartyToken") !== undefined
+    ) {
+      this.currentUserThirdPartyToken = JSON.parse(
+        sessionStorage.getItem("thirdPartyToken")
+      ).accessToken;
+      this.platform = JSON.parse(
+        sessionStorage.getItem("thirdPartyToken")
+      ).platform;
+      this.validateThirdPartyToken();
     }
   }
 };
@@ -107,7 +168,7 @@ export default {
 <style scoped>
 .contentClass {
   height: 100%;
-  width:80%;
+  width: 80%;
   margin-left: 22%;
   margin-top: 30px;
 }

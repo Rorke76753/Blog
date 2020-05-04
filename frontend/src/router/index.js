@@ -120,7 +120,7 @@ const routes = [
     ]
   },
   {
-    path: "/authentication",
+    path: "/authentication/:thirdParty",
     name: "验证",
     component: Authenticating
   }
@@ -148,13 +148,13 @@ router.beforeEach((to, from, next) => {
         .then(res => {
           if (res.status === 200 && res.data === true) {
             next();
-          } else {
-            next({
-              path: "/login",
-              query: { redirect: to.fullPath }
-            });
           }
+        }).catch(()=>{
+        next({
+          path: "/login",
+          query: { redirect: to.fullPath }
         });
+      });
     } else {
       // 重定向到登录界面
       next({

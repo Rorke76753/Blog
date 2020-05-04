@@ -1,4 +1,4 @@
-package edu.rorke.blog.background.controller;
+package edu.rorke.blog.background.controller.front;
 
 import edu.rorke.blog.background.entity.ArticleInfo;
 import edu.rorke.blog.background.entity.dto.ArticleDynamicSearch;

@@ -25,8 +25,13 @@ export default {
           })
           .then(res => {
             if (res.status === 200) {
-              sessionStorage.setItem("access_token", res.data.access_token);
-              this.$router.push("/");
+              sessionStorage.setItem(
+                "thirdPartyToken",
+                JSON.stringify(res.data)
+              );
+              let redirectTo = sessionStorage.getItem("afterLogin");
+              sessionStorage.removeItem("afterLogin");
+              this.$router.push(redirectTo);
             }
           });
       }

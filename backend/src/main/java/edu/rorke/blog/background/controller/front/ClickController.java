@@ -1,11 +1,10 @@
-package edu.rorke.blog.background.controller;
+package edu.rorke.blog.background.controller.front;
 
 import edu.rorke.blog.background.entity.dto.Article;
 import edu.rorke.blog.background.service.ClickService;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Rorke
@@ -22,7 +21,7 @@ public class ClickController {
 
     @PostMapping
     public void calculateClick(@RequestBody Article article){
-        if(article.getArticleId()!=0&& !StringUtils.isEmpty(article.getIp())) {
+        if(article.getArticleId()!=0 && !StringUtils.isEmpty(article.getIp())) {
             clickService.countClickNums(article.getArticleId(),article.getIp());
         }
     }
