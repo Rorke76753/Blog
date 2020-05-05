@@ -3,7 +3,7 @@ package edu.rorke.blog.background.controller.front.oauth;
 import edu.rorke.blog.background.entity.oauth.AccessToken;
 import edu.rorke.blog.background.entity.oauth.OauthUser;
 import edu.rorke.blog.background.service.OauthService;
-import org.springframework.beans.factory.annotation.Value;
+import edu.rorke.blog.background.util.OauthUtil;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
@@ -16,50 +16,46 @@ import org.springframework.web.client.HttpClientErrorException;
 @RestController
 @RequestMapping("/api/login/oauth")
 public class OauthController {
-    @Value("${oauth2.github.client-id}")
-    private String githubClientId;
-
-    @Value("${oauth2.github.client-secret}")
-    private String githubClientSecret;
-
-    @Value("${oauth2.github.oauthLink}")
-    private String githubOauthLink;
-
-    @Value("${oauth2.github.tokenLink}")
-    private String githubTokenLink;
-
-    @Value("${oauth2.github.infoLink}")
-    private String githubInfoLink;
 
     private final OauthService oauthService;
-    private final String GITHUB_PLATFORM = "Github";
-    private final String GITEE_PLATFORM = "Gitee";
+    private final OauthUtil oauthUtil;
 
-
-    public OauthController(OauthService oauthService) {
+    public OauthController(OauthService oauthService,OauthUtil oauthUtil) {
         this.oauthService = oauthService;
+        this.oauthUtil = oauthUtil;
     }
 
-    @GetMapping
-    public String getGithubOauthLink() {
-        return githubOauthLink;
+    @GetMapping("/{platform}")
+    public String getGithubOauthLink(@PathVariable String platform) {
+        String oauthLink = null;
+        if (oauthUtil.GITHUB_PLATFORM.equals(platform)) {
+            oauthLink = oauthUtil.githubOauthLink;
+        }
+        return oauthLink;
     }
 
     /**
      * 前端接收callback后通知后端向认证服务器确认code
-     *
      * @param code 前端接收callback后的code
      * @return access_token
      */
-    @GetMapping("/callback")
-    public AccessToken githubCallBack(@RequestParam("code") String code) {
-        String accessToken = oauthService.getAccessToken(githubTokenLink, code, githubClientId, githubClientSecret);
-        return AccessToken.builder().accessToken(accessToken).platform("Github").build();
+    @GetMapping("/callback/{platform}")
+    public AccessToken githubCallBack(@PathVariable String platform, @RequestParam("code") String code) {
+        String tokenLink = null, clientId = null, clientSecret = null;
+        if (oauthUtil.GITHUB_PLATFORM.equals(platform)) {
+            tokenLink = oauthUtil.githubTokenLink;
+            clientId = oauthUtil.githubClientId;
+            clientSecret = oauthUtil.githubClientSecret;
+        }
+        String accessToken = null;
+        if (tokenLink != null && clientId != null && clientSecret != null){
+             accessToken = oauthService.getAccessToken(tokenLink, code, clientId, clientSecret);
+        }
+        return AccessToken.builder().accessToken(accessToken).platform(platform).build();
     }
 
     /**
      * 验证+获取github用户信息
-     *
      * @param accessToken
      * @return
      */
@@ -67,10 +63,8 @@ public class OauthController {
     public OauthUser validateToken(@RequestBody AccessToken accessToken) {
         String token = accessToken.getAccessToken();
         String infoLink = null;
-        if (GITHUB_PLATFORM.equals(accessToken.getPlatform())) {
-            infoLink = githubInfoLink;
-        } else if (GITEE_PLATFORM.equals(accessToken.getPlatform())) {
-            //infoLink = giteeInfoLink;
+        if (oauthUtil.GITHUB_PLATFORM.equals(accessToken.getPlatform())) {
+            infoLink = oauthUtil.githubInfoLink;
         }
         OauthUser oauthUser = OauthUser.builder().build();
         if (infoLink != null) {

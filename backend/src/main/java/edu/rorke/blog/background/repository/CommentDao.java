@@ -3,8 +3,11 @@ package edu.rorke.blog.background.repository;
 import edu.rorke.blog.background.entity.Comment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * @author Rorke
@@ -13,10 +16,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CommentDao extends JpaRepository<Comment,Integer> {
     /**
-     * 获得文章下的评论
-     * @param articleId 文章id
-     * @param pageable 分页
-     * @return 评论列表(分页)
+     * 获得文章评论
+     * @param articleId
+     * @param sort
+     * @return
      */
-    Page<Comment> findByArticleId(int articleId, Pageable pageable);
+    List<Comment> findByArticleId(int articleId, Sort sort);
 }

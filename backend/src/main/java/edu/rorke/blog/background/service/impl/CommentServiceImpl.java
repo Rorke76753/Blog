@@ -11,6 +11,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -19,8 +22,8 @@ import java.util.Optional;
  */
 @Service
 public class CommentServiceImpl implements CommentService {
-    private CommentDao commentDao;
-    private ArticleInfoDao articleInfoDao;
+    private final CommentDao commentDao;
+    private final ArticleInfoDao articleInfoDao;
 
     @Autowired
     public CommentServiceImpl(CommentDao commentDao, ArticleInfoDao articleInfoDao) {
@@ -29,8 +32,8 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Page<Comment> getCommentsOfArticle(int articleId, int page, int pageSize) {
-        return commentDao.findByArticleId(articleId, PaginationUtil.defaultSortedPageRequest(page, pageSize, "publishDate", Sort.Direction.ASC));
+    public List<Comment> getCommentsOfArticle(int articleId) {
+        return commentDao.findByArticleId(articleId,Sort.by(Sort.Direction.ASC,"publishDate"));
     }
 
     @Override

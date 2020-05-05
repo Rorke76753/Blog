@@ -70,7 +70,9 @@
           <div>
             <el-button
               v-show="currentUserThirdPartyToken !== '' && isThirdPartyToken"
-            ></el-button>
+              plain
+              @click="postNewComment"
+            >发表评论</el-button>
           </div>
         </div>
         <div v-if="currentUserInfo.errorMessage !== null">
@@ -106,8 +108,6 @@ export default {
     return {
       articleContent: "",
       color: ["OrangeRed", "orange", "#ffd152", "LimeGreen", "DodgerBlue"],
-      nickName: "",
-      emailAddress: "",
       commentContent: "",
       currentUserThirdPartyToken: "",
       currentUserInfo: {},
@@ -116,12 +116,28 @@ export default {
     };
   },
   methods: {
+    postNewComment(){
+      axios.post("/comment",{
+        commentContent: this.commentContent,
+        articleId: this.$route.params.articleId,
+        accessToken: this.currentUserThirdPartyToken,
+        platform: this.platform
+      })
+    },
+    getCommentList() {
+      let articleId = this.$route.params.articleId;
+      axios.get("/comment/"+articleId).then(res=>{
+        console.log(res);
+      })
+    },
     initContent(articleContent) {
       this.articleContent = articleContent;
       this.$refs.viewer.invoke("setMarkdown", this.articleContent);
     },
     validateThirdPartyToken() {
-      let thirdPartyToken = JSON.parse(sessionStorage.getItem("thirdPartyToken"));
+      let thirdPartyToken = JSON.parse(
+        sessionStorage.getItem("thirdPartyToken")
+      );
       axios
         .post("/login/oauth/user", {
           accessToken: thirdPartyToken.accessToken,
@@ -160,6 +176,7 @@ export default {
         sessionStorage.getItem("thirdPartyToken")
       ).platform;
       this.validateThirdPartyToken();
+      this.getCommentList();
     }
   }
 };

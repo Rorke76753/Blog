@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * @author Rorke
@@ -27,10 +28,8 @@ public class Comment {
     private int commentId;
     private int articleId;
     @CreatedDate
-    private LocalDate publishDate;
-    private int likeNum;
+    private LocalDateTime publishDate;
     private String accessToken;
     private String platform;
     private String commentContent;
-    private int show;
 }

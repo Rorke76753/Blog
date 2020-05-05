@@ -20,13 +20,6 @@ public interface ArticleAndTagDao extends JpaRepository<ArticleAndTag,Integer> {
     List<ArticleAndTag> findAllByArticleId(int articleId);
 
     /**
-     * 根据文章和标签id删除
-     * @param articleId 文章id
-     * @param tagId 标签id
-     */
-    void deleteByArticleIdAndTagId(int articleId,int tagId);
-
-    /**
      * 根据文章id和标签id查找
      * @param articleId 文章id
      * @param tagId 标签id
