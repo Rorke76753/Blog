@@ -119,7 +119,6 @@ export default {
     },
 
     dynamicTable() {
-      let url = axios.defaults.baseURL + "/articles";
       let startDate, endDate;
       if (this.datePicker == null) {
         startDate = null;
@@ -140,7 +139,7 @@ export default {
         attributeId = this.$refs.attributeChoice.getData();
       }
       axios
-        .post(url, {
+        .post("/articles", {
           startDate: startDate,
           endDate: endDate,
           title: title,
@@ -172,7 +171,6 @@ export default {
     multiDelete() {
       this.multiId = this.$refs.articleTable.getMultiArr();
       let confirmMessage = "是否删除文章：共" + this.multiId.length + "篇文章";
-      let deleteUrl = axios.defaults.baseURL + "/articles";
       this.$confirm(confirmMessage, "确认删除多篇文章", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -180,7 +178,7 @@ export default {
       })
         .then(() => {
           axios
-            .delete(deleteUrl, {
+            .delete("/admin/articles", {
               params: {
                 articleIds: this.multiId + ""
               }
@@ -196,7 +194,7 @@ export default {
     },
 
     transferDataToComponent() {
-      this.$refs.articleTable.setArticleInfoList(this.articleList,true);
+      this.$refs.articleTable.setArticleInfoList(this.articleList, true);
     }
   }
 };

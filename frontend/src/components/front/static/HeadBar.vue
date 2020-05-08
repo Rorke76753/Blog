@@ -2,25 +2,10 @@
   <div>
     <el-row class="frontHeader" type="flex" justify="space-between">
       <el-col :span="3"> </el-col>
-      <el-col :span="3">
-        <el-tooltip
-          class="item"
-          effect="dark"
-          content="等待接入elastic search"
-          placement="bottom"
-        >
-          <el-input
-            v-model="titleInput"
-            placeholder="输入标题，按回车进行搜索"
-            clearable
-            disabled
-          ></el-input>
-        </el-tooltip>
-      </el-col>
       <el-col :span="6">
         <el-link icon="el-icon-s-tools" class="linkClass" @click="jumpTo('index')">博客</el-link>
         <el-link icon="el-icon-collection-tag" class="linkClass">标签</el-link>
-        <el-link icon="el-icon-date" class="linkClass" @click="jumpTo('articleTimeLine')">时间轴</el-link>
+        <el-link icon="el-icon-date" class="linkClass">时间轴</el-link>
         <el-link icon="el-icon-position" class="linkClass">关于我</el-link>
       </el-col>
     </el-row>

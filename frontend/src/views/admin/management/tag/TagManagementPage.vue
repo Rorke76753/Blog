@@ -54,9 +54,8 @@ export default {
     },
 
     initData() {
-      let tagUrl = axios.defaults.baseURL + "/tags";
       axios
-        .post(tagUrl, {
+        .post("/tags", {
           page: this.currentPage,
           pageSize: this.pageSize
         })

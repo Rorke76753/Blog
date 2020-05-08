@@ -71,7 +71,7 @@ export default {
   },
   methods: {
     setActivePath() {
-      window.sessionStorage.setItem("activePath", "/admin/homepage");
+      window.sessionStorage.setItem("activePath", "/admin/articles");
     },
 
     saveArticle() {
@@ -80,9 +80,8 @@ export default {
       this.description = this.$refs.description.getData();
       this.article = this.$refs.editor.getData();
       this.tags = this.$refs.tagsInput.getData();
-      let putUrl = axios.defaults.baseURL + "/article";
       axios
-        .post(putUrl, {
+        .post("/admin/article", {
           title: this.title,
           description: this.description,
           attributeId: this.attribute,

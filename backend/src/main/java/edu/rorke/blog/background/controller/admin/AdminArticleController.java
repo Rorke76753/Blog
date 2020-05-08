@@ -9,6 +9,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+
 /**
  * @author Rorke
  * @date 2020/4/29 16:02
@@ -40,6 +42,7 @@ public class AdminArticleController {
         ArticleInfo articleInfo = new ArticleInfo();
         ArticleContent articleContent = new ArticleContent();
         BeanUtils.copyProperties(article,articleInfo);
+        articleInfo.setLastUpdate(LocalDate.now());
         BeanUtils.copyProperties(article,articleContent);
         return articleService.saveNewArticle(articleInfo,articleContent);
     }

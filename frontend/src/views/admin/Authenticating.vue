@@ -11,14 +11,15 @@ export default {
       code: "",
       clientId: "",
       clientSecret: "",
-      accessToken: ""
+      accessToken: "",
+      platform:""
     };
   },
   methods: {
     authenticate() {
       if (this.code) {
         axios
-          .get("/login/oauth/callback", {
+          .get("/login/oauth/callback/" + this.platform, {
             params: {
               code: this.code
             }
@@ -39,6 +40,7 @@ export default {
   },
   created() {
     this.code = this.$route.query.code;
+    this.platform = this.$route.params.thirdParty
     this.authenticate();
   }
 };

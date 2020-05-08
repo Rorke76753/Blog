@@ -2,7 +2,7 @@
   <div>
     <CommentTable></CommentTable>
     <el-row style="padding-top: 10px;display: flex;justify-content: start">
-      <el-col><Pagination></Pagination></el-col>
+      <el-col></el-col>
       <el-col
         ><el-button
           style="width: 120px;height:100%;float: right"
@@ -16,13 +16,11 @@
 </template>
 
 <script>
-import Pagination from "../../../../components/admin/table/Pagination";
 import CommentTable from "../../../../components/admin/table/management/comment/CommentTable";
 
 export default {
   name: "CommentManagementPage",
   components: {
-    Pagination,
     CommentTable
   }
 };

@@ -141,20 +141,26 @@ router.beforeEach((to, from, next) => {
       let token = sessionStorage.getItem("token");
       axios
         .get("/login/validate", {
-          params:{
+          params: {
             token: token
           }
         })
         .then(res => {
           if (res.status === 200 && res.data === true) {
             next();
+          }else{
+            next({
+              path: "/login",
+              query: { redirect: to.fullPath }
+            });
           }
-        }).catch(()=>{
-        next({
-          path: "/login",
-          query: { redirect: to.fullPath }
+        })
+        .catch(() => {
+          next({
+            path: "/login",
+            query: { redirect: to.fullPath }
+          });
         });
-      });
     } else {
       // 重定向到登录界面
       next({

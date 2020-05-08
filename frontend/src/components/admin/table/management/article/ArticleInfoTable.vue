@@ -123,7 +123,6 @@ export default {
     deleteArticle(index, articleId, articleTitle) {
       let _this = this;
       let confirmMessage = "是否删除文章：" + articleTitle;
-      let deleteUrl = axios.defaults.baseURL + "/article/" + articleId;
       this.$confirm(confirmMessage, "确认删除文章", {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
@@ -131,7 +130,7 @@ export default {
       })
         .then(() => {
           axios
-            .delete(deleteUrl)
+            .delete("/admin/article/"+articleId)
             .then(res => {
               if (res.status === 200) {
                 this.$message({

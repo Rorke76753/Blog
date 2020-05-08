@@ -18,27 +18,22 @@
     <el-form label-position="right" label-width="80px">
       <el-form-item label="标签" class="formStyle holdHeight">
         <el-row type="flex">
-          <tagsInput ref="tagsInput" ></tagsInput>
+          <tagsInput ref="tagsInput"></tagsInput>
         </el-row>
       </el-form-item>
       <el-form-item label="标题" class="formStyle">
         <el-row type="flex">
-          <titleInput ref="titleInput" ></titleInput>
+          <titleInput ref="titleInput"></titleInput>
         </el-row>
       </el-form-item>
       <el-form-item label="文章描述" class="formStyle">
         <el-row type="flex">
-          <descriptionInput
-            ref="descriptionInput"
-
-          ></descriptionInput>
+          <descriptionInput ref="descriptionInput"></descriptionInput>
         </el-row>
       </el-form-item>
       <el-form-item label="选择属性" class="formStyle">
         <el-row type="flex">
-          <attributeChoice
-            ref="attributeChoice"
-          ></attributeChoice>
+          <attributeChoice ref="attributeChoice"></attributeChoice>
         </el-row>
       </el-form-item>
     </el-form>
@@ -77,8 +72,7 @@ export default {
   },
   methods: {
     initData() {
-      let requestUrl = axios.defaults.baseURL + "/article/" + this.articleId;
-      axios.get(requestUrl).then(res => {
+      axios.get("/article/" + this.articleId).then(res => {
         if (res.status === 200) {
           this.articleContent = res.data.articleContent;
           this.$refs.editor.setData(this.articleContent);
@@ -86,7 +80,7 @@ export default {
       });
     },
 
-    transferDataToComponent(){
+    transferDataToComponent() {
       this.$refs.tagsInput.setTagsInput(this.tags);
       this.$refs.titleInput.setTitleInput(this.title);
       this.$refs.descriptionInput.setDescriptionInput(this.description);
@@ -94,7 +88,7 @@ export default {
     },
 
     setActivePath() {
-      window.sessionStorage.setItem("activePath", "/admin/homepage");
+      window.sessionStorage.setItem("activePath", "/admin/articles");
     },
 
     getData() {
@@ -106,10 +100,9 @@ export default {
     },
 
     updateArticle() {
-      let putUrl = axios.defaults.baseURL + "/article/" + this.articleId;
       this.getData();
       axios
-        .put(putUrl, {
+        .put("/admin/article/" + this.articleId, {
           articleId: this.articleId,
           title: this.title,
           description: this.description,

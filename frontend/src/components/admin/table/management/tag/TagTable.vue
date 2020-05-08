@@ -9,7 +9,7 @@
     >
       <el-table-column prop="tagId" label="标签id" width="65"></el-table-column>
       <el-table-column
-              sortable
+        sortable
         prop="relativeNum"
         label="相关文章数"
         width="400"
@@ -92,9 +92,8 @@ export default {
         inputPattern: /[^ \f\n\r\t\v]/,
         inputErrorMessage: "标签内容不可为空"
       }).then(({ value }) => {
-        let putTagUrl = axios.defaults.baseURL + "/tag/" + tagId;
         axios
-          .put(putTagUrl, {
+          .put("/admin/tag/" + tagId, {
             tagId: tagId,
             tagContent: value,
             relativeNum: relativeNum
@@ -141,8 +140,8 @@ export default {
         });
       } else {
         this.$message({
-          message: '标签 \''+tagContent+'\'暂时没有相关文章哦~',
-          type: 'warning'
+          message: "标签 '" + tagContent + "'暂时没有相关文章哦~",
+          type: "warning"
         });
       }
     }

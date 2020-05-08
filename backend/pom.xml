@@ -10,7 +10,7 @@
     </parent>
     <groupId>edu.rorke</groupId>
     <artifactId>blog-background-management</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>Online-Testing</version>
     <name>blog-background-management</name>
     <description>Demo project for Spring Boot</description>
 
@@ -99,7 +99,7 @@
             <version>0.9.1</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.httpcomponents</groupId>　　　
+            <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.5.3</version>
         </dependency>

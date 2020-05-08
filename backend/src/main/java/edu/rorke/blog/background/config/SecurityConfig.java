@@ -38,14 +38,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .cors().and()
-                .exceptionHandling().authenticationEntryPoint(entryPoint)
-                .and()
-                .authorizeRequests()
-                .antMatchers("/api/login/**").permitAll()
-                //注意！！！这里只能写作request而非其他如httpServletRequest等
-                //.antMatchers("/api/admin/**").access("@rbacService.hasPermission(request,authentication)")
-                .antMatchers("/api/admin/**").authenticated()
-                .and()
+//                .exceptionHandling().authenticationEntryPoint(entryPoint)
+//                .and()
+//                .authorizeRequests()
+//                .antMatchers("/api/login/**").permitAll()
+//                //注意！！！这里只能写作request而非其他如httpServletRequest等
+//                //.antMatchers("/api/admin/**").access("@rbacService.hasPermission(request,authentication)")
+//                .antMatchers("/api/admin/**").authenticated()
+//                .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilterBefore(this.createAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);

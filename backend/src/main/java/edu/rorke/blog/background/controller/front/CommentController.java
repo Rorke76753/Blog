@@ -34,6 +34,7 @@ public class CommentController {
     public List<CommentInfo> getCommentsOfArticle(@PathVariable int articleId) {
         List<Comment> commentsOfArticle = commentService.getCommentsOfArticle(articleId);
         Map<String, OauthUser> userMap = new HashMap<>(16);
+        //TODO: 并发发送获取信息的请求
         commentsOfArticle.forEach(comment -> {
             String infoLink = null, accessToken = comment.getAccessToken();
             if (oauthUtil.GITHUB_PLATFORM.equals(comment.getPlatform())) {

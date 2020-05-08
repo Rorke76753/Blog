@@ -42,10 +42,39 @@
       </div>
     </el-card>
     <el-card style="margin-top: 30px">
-      <div class="commentList" style="text-align: center">
-        <span>
-          暂无评论
-        </span>
+      <div class="commentList">
+        <div v-for="comment in commentList" :key="commentList.indexOf(comment)" >
+          <div style="display: flex;justify-content: space-between">
+            <div v-if="comment.errorMessage === null">
+              <el-avatar :size="30" :src="comment.avatarUrl"></el-avatar>
+              <el-link
+                      @click="visitThirdPartyUserInfo(comment.htmlUrl)"
+              >{{ comment.username }}</el-link
+              >
+            </div>
+            <div v-else>
+              <span style="color: red">{{comment.errorMessage}}</span>
+            </div>
+            <div>
+              <span>{{comment.publishDate}}</span>
+            </div>
+          </div>
+
+          <div style="padding-top: 10px">
+            <viewer :initial-value="comment.commentContent"></viewer>
+          </div>
+          <div style="display:flex;justify-content: flex-end">
+            <div style="display: flex">
+            <span>#{{commentList.indexOf(comment)}}</span>
+              <el-tooltip class="item" effect="dark" content="暂未开放" placement="bottom">
+                <el-button size="mini" type="text">回复</el-button>
+              </el-tooltip>
+            </div>
+          </div>
+          <el-divider
+            v-if="commentList.indexOf(comment) < commentList.length - 1"
+          ></el-divider>
+        </div>
       </div>
       <el-divider></el-divider>
       <div class="commentForm">
@@ -72,7 +101,8 @@
               v-show="currentUserThirdPartyToken !== '' && isThirdPartyToken"
               plain
               @click="postNewComment"
-            >发表评论</el-button>
+              >发表评论</el-button
+            >
           </div>
         </div>
         <div v-if="currentUserInfo.errorMessage !== null">
@@ -112,23 +142,26 @@ export default {
       currentUserThirdPartyToken: "",
       currentUserInfo: {},
       platform: "",
-      isThirdPartyToken: false
+      isThirdPartyToken: false,
+      commentList: []
     };
   },
   methods: {
-    postNewComment(){
-      axios.post("/comment",{
+    postNewComment() {
+      axios.post("/comment", {
         commentContent: this.commentContent,
         articleId: this.$route.params.articleId,
         accessToken: this.currentUserThirdPartyToken,
         platform: this.platform
-      })
+      });
     },
     getCommentList() {
       let articleId = this.$route.params.articleId;
-      axios.get("/comment/"+articleId).then(res=>{
-        console.log(res);
-      })
+      axios.get("/comment/" + articleId).then(res => {
+        if (res.status === 200) {
+          this.commentList = res.data;
+        }
+      });
     },
     initContent(articleContent) {
       this.articleContent = articleContent;
@@ -157,7 +190,7 @@ export default {
     },
     loginWithGithub() {
       sessionStorage.setItem("afterLogin", this.$route.path);
-      axios.get("/login/oauth").then(res => {
+      axios.get("/login/oauth/Github").then(res => {
         if (res.status === 200) {
           window.location.href = res.data;
         }
@@ -176,8 +209,8 @@ export default {
         sessionStorage.getItem("thirdPartyToken")
       ).platform;
       this.validateThirdPartyToken();
-      this.getCommentList();
     }
+    this.getCommentList();
   }
 };
 </script>

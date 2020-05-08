@@ -10,10 +10,16 @@ import axios from "axios";
 //Vue.use(Antd);
 Vue.config.productionTip = false;
 Vue.prototype.$http = axios;
+//axios.defaults.headers.common["token"] = sessionStorage.getItem("token");
 axios.defaults.baseURL = "http://localhost:7625/api";
-axios.defaults.withCredentials = true;
+axios.defaults.baseURL = "http://rorke76753.xyz:7625/api";
 new Vue({
   router,
   store,
   render: h => h(App),
+  http: {
+    headers: {
+      token: sessionStorage.getItem("token")
+    }
+  }
 }).$mount("#app");
