@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import clickService from "../../../http/api/front/click";
 export default {
   name: "ArticleInfo",
   props: {
@@ -76,7 +76,7 @@ export default {
   methods: {
     getArticleContent(id) {
       let _this = this;
-      axios.post("/click", {
+      clickService.countClick({
         articleId: id,
         ip: sessionStorage.getItem("ip")
       });

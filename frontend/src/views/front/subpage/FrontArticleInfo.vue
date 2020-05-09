@@ -32,7 +32,8 @@
           </el-card>
         </div>
         <el-pagination
-          :page-size="pageSize"
+          page-size="10"
+          @current-change = "handleCurrentChange"
           :page-count="totalPage"
           layout="prev, pager, next"
           :total="totalElements"
@@ -86,7 +87,8 @@
 </template>
 
 <script>
-import axios from "axios";
+import frontArticleList from "../../../http/api/front/articleList";
+import frontTagList from "../../../http/api/front/tagList";
 import ArticleInfo from "../../../components/front/articleInfo/ArticleInfo";
 import { GetCurrentBrowser } from "../../../assets/ClientInfo";
 
@@ -96,7 +98,7 @@ export default {
     return {
       articleInfoList: [],
       tagList: [],
-      orderBy: "publishDate",
+      sortBy: "publishDate",
       tagColor: [
         "#ff0000",
         "rgba(253,88,19,0.8)",
@@ -105,7 +107,6 @@ export default {
         "#0090ff"
       ],
       currentPage: 1,
-      pageSize: 10,
       totalElements: 1,
       totalPage: 1
     };
@@ -116,31 +117,35 @@ export default {
     },
     initData() {
       this.getBrowser();
-      axios
-        .post("/articles", {
-          page: 1,
-          pageSize: this.pageSize,
-          orderBy: this.orderBy
+      frontArticleList
+        .dynamicArticlesPagination({
+          page: this.currentPage,
+          pageSize: 10,
+          sortBy: this.sortBy
         })
         .then(res => {
           this.articleInfoList = res.data.content;
           this.totalElements = res.data.totalElements;
-          this.totalPage = res.data.totalPage;
+          this.currentPage = res.data.pageable.pageNumber + 1;
         });
     },
     sortArticleInfo(orderBy) {
       this.orderBy = orderBy;
       this.initData();
     },
+    handleCurrentChange(res) {
+      this.currentPage = res;
+      this.initData();
+    },
     getTags() {
-      axios
-        .post("/tags", {
-          page: 1,
-          pageSize: 10
-        })
-        .then(res => {
-          this.tagList = res.data.content;
-        });
+      let dynamicSearch = {
+        page: 1,
+        pageSize: 10,
+        sortBy: "relativeNum"
+      };
+      frontTagList.getTagWallList(dynamicSearch).then(res => {
+        this.tagList = res.data.content;
+      });
     }
   },
   created() {

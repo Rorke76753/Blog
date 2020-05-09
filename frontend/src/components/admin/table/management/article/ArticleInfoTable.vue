@@ -8,7 +8,12 @@
       @select="selectMultiple"
       @select-all="selectAll"
     >
-      <el-table-column type="selection" width="45" fixed v-if="operated"></el-table-column>
+      <el-table-column
+        type="selection"
+        width="45"
+        fixed
+        v-if="operated"
+      ></el-table-column>
       <el-table-column
         fixed
         prop="articleId"
@@ -21,7 +26,7 @@
         width="440"
         fixed
       ></el-table-column>
-      <el-table-column prop="attributeName" label="文章属性" width="100" >
+      <el-table-column prop="attributeName" label="文章属性" width="100">
       </el-table-column>
       <el-table-column
         prop="description"
@@ -55,7 +60,12 @@
         label="点赞数"
         width="80"
       ></el-table-column>
-      <el-table-column prop="top" label="置顶" width="80" v-if="operated"></el-table-column>
+      <el-table-column
+        prop="top"
+        label="置顶"
+        width="80"
+        v-if="operated"
+      ></el-table-column>
       <el-table-column prop="tagList" label="标签" width="1000" v-if="operated">
         <template slot-scope="scope">
           <el-tag
@@ -90,8 +100,7 @@
 </template>
 
 <script>
-import axios from "axios";
-
+import adminArticle from "../../../../../http/api/admin/article";
 export default {
   name: "ArticleTable",
   data() {
@@ -103,7 +112,7 @@ export default {
     };
   },
   methods: {
-    setArticleInfoList(articleInfo,operated) {
+    setArticleInfoList(articleInfo, operated) {
       this.articleInfoList = articleInfo;
       this.operated = operated;
     },
@@ -127,26 +136,16 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
-      })
-        .then(() => {
-          axios
-            .delete("/admin/article/"+articleId)
-            .then(res => {
-              if (res.status === 200) {
-                this.$message({
-                  type: "success",
-                  message: "删除成功!"
-                });
-              }
-            })
-            .catch(error => {
-              console.log(error);
-            });
-        })
-        .catch(() => {})
-        .finally(() => {
+      }).then(() => {
+        adminArticle.deleteArticle(articleId).then(res => {
+          console.log(res);
+          this.$message({
+            type: "success",
+            message: "删除成功!"
+          });
           _this.articleInfoList.splice(index, 1);
         });
+      });
     },
     goToEdit(row) {
       this.$router.push({

@@ -14,12 +14,7 @@
         </router-link>
       </el-col>
     </el-row>
-    <el-table
-      :data="tableData"
-
-      style="width: 100%;margin-top: 30px"
-      stripe
-    >
+    <el-table :data="tableData" style="width: 100%;margin-top: 30px" stripe>
       <el-table-column type="selection" width="45"></el-table-column>
       <el-table-column prop="id" label="评论id" width="65"></el-table-column>
       <el-table-column

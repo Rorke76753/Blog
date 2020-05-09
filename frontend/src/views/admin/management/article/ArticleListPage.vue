@@ -71,7 +71,7 @@
 import Title from "../../../../components/admin/article/form/Title";
 import AttributeChoice from "../../../../components/admin/article/form/AttributeChoice";
 import ArticleTable from "../../../../components/admin/table/management/article/ArticleInfoTable";
-import axios from "axios";
+import adminArticleList from "../../../../http/api/admin/articleList";
 export default {
   name: "ArticleManagementPage",
   components: {
@@ -138,8 +138,8 @@ export default {
       } else {
         attributeId = this.$refs.attributeChoice.getData();
       }
-      axios
-        .post("/articles", {
+      adminArticleList
+        .dynamicArticlesTable({
           startDate: startDate,
           endDate: endDate,
           title: title,
@@ -164,10 +164,6 @@ export default {
       this.dynamicTable();
     },
 
-    currentPage2() {
-      return this.articleList.number + 1;
-    },
-
     multiDelete() {
       this.multiId = this.$refs.articleTable.getMultiArr();
       let confirmMessage = "是否删除文章：共" + this.multiId.length + "篇文章";
@@ -175,22 +171,11 @@ export default {
         confirmButtonText: "确定",
         cancelButtonText: "取消",
         type: "warning"
-      })
-        .then(() => {
-          axios
-            .delete("/admin/articles", {
-              params: {
-                articleIds: this.multiId + ""
-              }
-            })
-            .then(() => {
-              location.reload();
-            })
-            .catch(error => {
-              console.log(error);
-            });
-        })
-        .catch(() => {});
+      }).then(() => {
+        adminArticleList.deleteMultipleArticles(this.multiId).then(() => {
+          location.reload();
+        });
+      });
     },
 
     transferDataToComponent() {

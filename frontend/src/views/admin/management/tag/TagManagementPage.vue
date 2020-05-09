@@ -1,9 +1,7 @@
 <template>
   <div>
     <router-link to="/">
-      <el-button type="success" class="formStyle"
-        >返回首页</el-button
-      >
+      <el-button type="success" class="formStyle">返回首页</el-button>
     </router-link>
     <TagTable ref="tagTable"></TagTable>
     <el-row style="padding-top: 10px;display: flex;justify-content: start">
@@ -27,7 +25,7 @@
 
 <script>
 import TagTable from "../../../../components/admin/table/management/tag/TagTable";
-import axios from "axios";
+import adminTag from "../../../../http/api/admin/tag";
 export default {
   name: "TagManagementPage",
   components: {
@@ -54,8 +52,8 @@ export default {
     },
 
     initData() {
-      axios
-        .post("/tags", {
+      adminTag
+        .getTagRelativeArticles({
           page: this.currentPage,
           pageSize: this.pageSize
         })
@@ -63,9 +61,10 @@ export default {
           this.tagList = res.data.content;
           this.totalElements = res.data.totalElements;
           this.currentPage = res.data.pageable.pageNumber + 1;
-        }).finally(()=>{
+        })
+        .finally(() => {
           this.transferData();
-      });
+        });
     },
     transferData() {
       this.$refs.tagTable.setData(this.tagList);

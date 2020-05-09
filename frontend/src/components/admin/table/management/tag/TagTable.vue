@@ -47,8 +47,8 @@
 </template>
 
 <script>
-import axios from "axios";
 import ArticleInfoTable from "../article/ArticleInfoTable";
+import adminTag from "../../../../../http/api/admin/tag";
 export default {
   name: "TagTable",
   components: {
@@ -70,11 +70,7 @@ export default {
     setData(tagList) {
       this.tagList = tagList;
       for (let i = 0; i < this.tagList.length; i++) {
-        if (this.tagList[i].relativeNum > 0) {
-          this.tagList[i].hasChildren = true;
-        } else {
-          this.tagList[i].hasChildren = false;
-        }
+        this.tagList[i].hasChildren = this.tagList[i].relativeNum > 0;
       }
     },
 
@@ -92,39 +88,25 @@ export default {
         inputPattern: /[^ \f\n\r\t\v]/,
         inputErrorMessage: "标签内容不可为空"
       }).then(({ value }) => {
-        axios
-          .put("/admin/tag/" + tagId, {
+        adminTag
+          .updateTagContent(tagId, {
             tagId: tagId,
             tagContent: value,
             relativeNum: relativeNum
           })
           .then(res => {
-            if (res.status === 200) {
-              let resId = res.data.tagId;
-              let resContent = res.data.tagContent;
-              let resRelativeNum = res.data.relativeNum;
-              if (
-                resId === tagId &&
-                resContent === value &&
-                resRelativeNum === resRelativeNum
-              ) {
-                this.$message({
-                  message: "修改成功",
-                  type: "success"
-                });
-                row.tagContent = value;
-              } else {
-                this.$message({
-                  message: "修改未成功，请稍后再试",
-                  type: "warning"
-                });
-              }
-            } else {
-              this.$message({
-                message: "修改发生错误，请稍后再试",
-                type: "danger"
-              });
-            }
+            console.log(res);
+            this.$message({
+              message: "修改成功",
+              type: "success"
+            });
+            row.tagContent = value;
+          })
+          .catch(() => {
+            this.$message({
+              message: "修改发生错误，请稍后再试",
+              type: "danger"
+            });
           });
       });
     },
@@ -133,9 +115,7 @@ export default {
       if (hasChildren) {
         this.dynamicTitle = "标签 '" + tagContent + "' 相关的文章";
         this.dialogTableVisible = true;
-        let relativeArticleUrl =
-          axios.defaults.baseURL + "/tag/" + tagId + "/relative";
-        axios.get(relativeArticleUrl).then(res => {
+        adminTag.getTagRelativeArticles(tagId).then(res => {
           this.$refs.articleInfo.setArticleInfoList(res.data, false);
         });
       } else {

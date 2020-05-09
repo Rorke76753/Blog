@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import adminLogin from "../../http/api/admin/login";
 export default {
   name: "Login",
   data() {
@@ -20,20 +20,18 @@ export default {
   },
   methods: {
     submitForm(username, password) {
-      axios
-        .post("/login/authentication", {
+      adminLogin
+        .adminLogin({
           username: username,
           password: password
         })
         .then(res => {
-          if (res.status === 200) {
-            if (res.headers.token) {
-              let token = res.headers.token;
-              sessionStorage.setItem("token", token);
-              this.$router.push("/admin/articles");
-            } else {
-              this.$message("用户名或密码错误");
-            }
+          if (res.headers.token) {
+            let token = res.headers.token;
+            sessionStorage.setItem("token", token);
+            this.$router.push("/admin/articles");
+          } else {
+            this.$message("用户名或密码错误");
           }
         });
     }

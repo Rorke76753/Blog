@@ -43,20 +43,19 @@
     </el-card>
     <el-card style="margin-top: 30px">
       <div class="commentList">
-        <div v-for="comment in commentList" :key="commentList.indexOf(comment)" >
+        <div v-for="comment in commentList" :key="commentList.indexOf(comment)">
           <div style="display: flex;justify-content: space-between">
             <div v-if="comment.errorMessage === null">
               <el-avatar :size="30" :src="comment.avatarUrl"></el-avatar>
-              <el-link
-                      @click="visitThirdPartyUserInfo(comment.htmlUrl)"
-              >{{ comment.username }}</el-link
-              >
+              <el-link @click="visitThirdPartyUserInfo(comment.htmlUrl)">{{
+                comment.username
+              }}</el-link>
             </div>
             <div v-else>
-              <span style="color: red">{{comment.errorMessage}}</span>
+              <span style="color: red">{{ comment.errorMessage }}</span>
             </div>
             <div>
-              <span>{{comment.publishDate}}</span>
+              <span>{{ comment.publishDate }}</span>
             </div>
           </div>
 
@@ -65,8 +64,13 @@
           </div>
           <div style="display:flex;justify-content: flex-end">
             <div style="display: flex">
-            <span>#{{commentList.indexOf(comment)}}</span>
-              <el-tooltip class="item" effect="dark" content="暂未开放" placement="bottom">
+              <span>#{{ commentList.indexOf(comment) }}</span>
+              <el-tooltip
+                class="item"
+                effect="dark"
+                content="暂未开放"
+                placement="bottom"
+              >
                 <el-button size="mini" type="text">回复</el-button>
               </el-tooltip>
             </div>
@@ -101,6 +105,7 @@
               v-show="currentUserThirdPartyToken !== '' && isThirdPartyToken"
               plain
               @click="postNewComment"
+              ref="postCommentBtn"
               >发表评论</el-button
             >
           </div>
@@ -111,6 +116,8 @@
         <div style="padding-top:20px">
           <el-input
             type="textarea"
+            maxlength="200"
+            show-word-limit
             :autosize="{ minRows: 2, maxRows: 4 }"
             placeholder="评论内容"
             v-model="commentContent"
@@ -124,7 +131,8 @@
 
 <script>
 import Viewer from "@toast-ui/vue-editor/src/Viewer.vue";
-import axios from "axios";
+import oauthService from "../../../http/api/front/oauth/oauthLogin";
+import frontComment from "../../../http/api/front/comment";
 import "@toast-ui/editor/dist/toastui-editor-viewer.css";
 export default {
   name: "ArticleContent",
@@ -148,41 +156,47 @@ export default {
   },
   methods: {
     postNewComment() {
-      axios.post("/comment", {
-        commentContent: this.commentContent,
-        articleId: this.$route.params.articleId,
-        accessToken: this.currentUserThirdPartyToken,
-        platform: this.platform
-      });
+      this.$refs.postCommentBtn.disabled = true;
+      frontComment
+        .postComment({
+          commentContent: this.commentContent,
+          articleId: this.$route.params.articleId,
+          accessToken: this.currentUserThirdPartyToken,
+          platform: this.platform
+        })
+        .then(res => {
+          this.commentList.push(res.data);
+          this.commentContent = "";
+        })
+        .catch(() => {
+          this.$message.error("评论出错，请稍后再试");
+        })
+        .finally(() => {
+          this.$refs.postCommentBtn.disabled = false;
+        });
     },
     getCommentList() {
-      let articleId = this.$route.params.articleId;
-      axios.get("/comment/" + articleId).then(res => {
-        if (res.status === 200) {
+      frontComment
+        .getCommentsOfArticle(this.$route.params.articleId)
+        .then(res => {
           this.commentList = res.data;
-        }
-      });
+        });
     },
     initContent(articleContent) {
       this.articleContent = articleContent;
       this.$refs.viewer.invoke("setMarkdown", this.articleContent);
     },
     validateThirdPartyToken() {
-      let thirdPartyToken = JSON.parse(
-        sessionStorage.getItem("thirdPartyToken")
-      );
-      axios
-        .post("/login/oauth/user", {
-          accessToken: thirdPartyToken.accessToken,
-          platform: thirdPartyToken.platform
+      oauthService
+        .validateToken({
+          accessToken: sessionStorage.getItem("thirdPartyToken").accessToken,
+          platform: sessionStorage.getItem("thirdPartyToken").platform
         })
         .then(res => {
-          if (res.status === 200) {
-            if (res.data.errorMessage === null) {
-              this.isThirdPartyToken = true;
-            }
-            this.currentUserInfo = res.data;
+          if (res.data.errorMessage === null) {
+            this.isThirdPartyToken = true;
           }
+          this.currentUserInfo = res.data;
         });
     },
     visitThirdPartyUserInfo(htmlUrl) {
@@ -190,11 +204,10 @@ export default {
     },
     loginWithGithub() {
       sessionStorage.setItem("afterLogin", this.$route.path);
-      axios.get("/login/oauth/Github").then(res => {
-        if (res.status === 200) {
-          window.location.href = res.data;
-        }
-      });
+      oauthService.getOauthLink()
+      oauthService.getOauthLink("Github").then(res=>{
+        window.location.href = res.data;
+      })
     }
   },
   created() {

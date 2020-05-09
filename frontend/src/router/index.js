@@ -14,7 +14,7 @@ import FrontArticleContent from "../views/front/subpage/FrontArticleContent";
 import FrontArticleInfo from "../views/front/subpage/FrontArticleInfo";
 import FrontTimeLine from "../views/front/subpage/FrontTimeLine";
 import LoginPage from "../views/admin/LoginPage";
-import Authenticating from "../views/admin/Authenticating";
+import Authenticating from "../views/front/subpage/Authenticating";
 Vue.use(VueRouter);
 
 const routes = [
@@ -130,8 +130,8 @@ const router = new VueRouter({
   routes
 });
 
+import adminLogin from "../http/api/admin/login.js"
 export default router;
-import axios from "axios";
 router.beforeEach((to, from, next) => {
   // 对 to.matched 数组中的每个路由调用箭头函数
   if (to.meta.requireAuth) {
@@ -139,16 +139,12 @@ router.beforeEach((to, from, next) => {
     if (sessionStorage.getItem("token")) {
       // 继续路由
       let token = sessionStorage.getItem("token");
-      axios
-        .get("/login/validate", {
-          params: {
-            token: token
-          }
-        })
+      adminLogin
+        .validateToken(token)
         .then(res => {
-          if (res.status === 200 && res.data === true) {
+          if (res.data) {
             next();
-          }else{
+          } else {
             next({
               path: "/login",
               query: { redirect: to.fullPath }

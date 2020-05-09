@@ -4,15 +4,9 @@ import router from "./router";
 import store from "./store";
 import "./plugins/element.js";
 import "./plugins/element.js";
-//import Antd from 'ant-design-vue';
-import "ant-design-vue/dist/antd.css";
-import axios from "axios";
-//Vue.use(Antd);
+import adminLogin from "./http/api/admin/login.js"
 Vue.config.productionTip = false;
-Vue.prototype.$http = axios;
-//axios.defaults.headers.common["token"] = sessionStorage.getItem("token");
-axios.defaults.baseURL = "http://localhost:7625/api";
-axios.defaults.baseURL = "http://rorke76753.xyz:7625/api";
+Vue.prototype.$login = adminLogin;
 new Vue({
   router,
   store,

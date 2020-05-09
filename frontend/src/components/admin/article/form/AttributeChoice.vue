@@ -18,18 +18,17 @@
 </template>
 
 <script>
-import axios from "axios";
-
+import attributeList from "../../../../http/api/front/attributeList";
 export default {
   name: "AttributeChoice",
   data() {
     return {
-      selectValue:"",
+      selectValue: "",
       articleAttribute: []
     };
   },
   methods: {
-    setAttributeChoice(selectValue){
+    setAttributeChoice(selectValue) {
       this.selectValue = selectValue;
     },
 
@@ -47,10 +46,8 @@ export default {
       return attributeId;
     },
     getAttributeList() {
-      axios.get(axios.defaults.baseURL + "/attributes").then(res => {
-        if (res.status === 200) {
-          this.articleAttribute = res.data;
-        }
+      attributeList.getAttributeList().then(res => {
+        this.articleAttribute = res.data;
       });
     }
   },

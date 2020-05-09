@@ -48,8 +48,7 @@ import TagsInput from "../../../../components/admin/article/form/TagsInput";
 import Description from "../../../../components/admin/article/form/Description";
 import Title from "../../../../components/admin/article/form/Title";
 import AttributeChoice from "../../../../components/admin/article/form/AttributeChoice";
-
-import axios from "axios";
+import adminArticle from "../../../../http/api/admin/article";
 export default {
   name: "ArticleManagementPage",
   components: {
@@ -72,11 +71,9 @@ export default {
   },
   methods: {
     initData() {
-      axios.get("/article/" + this.articleId).then(res => {
-        if (res.status === 200) {
-          this.articleContent = res.data.articleContent;
-          this.$refs.editor.setData(this.articleContent);
-        }
+      adminArticle.getArticleContent(this.articleId).then(res => {
+        this.articleContent = res.data.articleContent;
+        this.$refs.editor.setData(this.articleContent);
       });
     },
 
@@ -101,8 +98,8 @@ export default {
 
     updateArticle() {
       this.getData();
-      axios
-        .put("/admin/article/" + this.articleId, {
+      adminArticle
+        .updateArticle(this.articleId, {
           articleId: this.articleId,
           title: this.title,
           description: this.description,
@@ -111,7 +108,7 @@ export default {
           tagList: this.tags
         })
         .then(res => {
-          if (res.status === 200 && res.data !== 0) {
+          if (res.data !== 0) {
             this.$router.push("/admin/articles");
           } else {
             this.$message({

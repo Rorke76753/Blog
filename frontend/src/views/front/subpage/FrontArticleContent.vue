@@ -46,8 +46,11 @@
 </template>
 
 <script>
-import axios from "axios";
+import frontArticle from "../../../http/api/front/article";
 import ArticleContent from "../../../components/front/articleContent/ArticleContent";
+import recommendService from "../../../http/api/front/recommend";
+import recentService from "../../../http/api/front/recent";
+import clickService from "../../../http/api/front/click";
 export default {
   name: "FrontArticleContent",
   components: {
@@ -74,42 +77,32 @@ export default {
   methods: {
     getInfo() {
       let id = this.$route.params.articleId;
-      axios.get("/article/info/" + id).then(res => {
-        if (res.status === 200) {
-          this.articleInfo = res.data;
-          sessionStorage.setItem(
-            "articleInfo",
-            JSON.stringify(this.articleInfo)
-          );
-        }
+      frontArticle.getArticleInfo(id).then(res => {
+        this.articleInfo = res.data;
+        sessionStorage.setItem("articleInfo", JSON.stringify(this.articleInfo));
       });
     },
     getContent() {
-      axios.get("/article/" + this.$route.params.articleId).then(res => {
-        if (res.status === 200) {
-          this.articleContent = res.data.articleContent;
-          this.$refs.articleContent.initContent(this.articleContent);
-        }
+      let id = this.$route.params.articleId;
+      frontArticle.getArticleContent(id).then(res => {
+        this.articleContent = res.data.articleContent;
+        this.$refs.articleContent.initContent(this.articleContent);
       });
     },
     getRecommend() {
-      axios.get("/recommend").then(res => {
-        if (res.status === 200) {
-          this.recommendList = res.data;
-        }
+      recommendService.getRecommendList().then(res => {
+        this.recommendList = res.data;
       });
     },
     getRecent() {
-      axios.get("/recent").then(res => {
-        if (res.status === 200) {
-          this.recentList = res.data;
-        }
+      recentService.getRecentList().then(res => {
+        this.recentList = res.data;
       });
     },
     jumpTo(articleInfo) {
       if (articleInfo.articleId !== this.$route.params.articleId) {
         this.articleInfo = articleInfo;
-        axios.post("/click", {
+        clickService.countClick({
           articleId: articleInfo.articleId,
           ip: sessionStorage.getItem("ip")
         });

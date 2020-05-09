@@ -48,7 +48,7 @@ import TagsInput from "../../components/admin/article/form/TagsInput";
 import Description from "../../components/admin/article/form/Description";
 import Title from "../../components/admin/article/form/Title";
 import AttributeChoice from "../../components/admin/article/form/AttributeChoice";
-import axios from "axios";
+import adminArticle from "../../http/api/admin/article";
 export default {
   name: "ArticleManagementPage",
 
@@ -80,8 +80,8 @@ export default {
       this.description = this.$refs.description.getData();
       this.article = this.$refs.editor.getData();
       this.tags = this.$refs.tagsInput.getData();
-      axios
-        .post("/admin/article", {
+      adminArticle
+        .saveNewArticle({
           title: this.title,
           description: this.description,
           attributeId: this.attribute,
@@ -89,7 +89,7 @@ export default {
           tagList: this.tags
         })
         .then(res => {
-          if (res.status === 200 && res.data !== 0) {
+          if (res.data !== 0) {
             this.$router.push("/admin/articles");
           } else {
             this.$message({
