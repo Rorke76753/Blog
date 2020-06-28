@@ -3,7 +3,9 @@ package edu.rorke.blog.backend.controller.admin;
 
 import edu.rorke.blog.backend.entity.ArticleInfo;
 import edu.rorke.blog.backend.entity.Tag;
+import edu.rorke.blog.backend.entity.dto.TagPagination;
 import edu.rorke.blog.backend.service.TagService;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +28,10 @@ public class AdminTagController {
     @GetMapping("/{tagId}/relative")
     public List<ArticleInfo> getRelativeArticleInfo(@PathVariable int tagId){
         return tagService.getRelativeArticleInfo(tagId);
+    }
+    @PostMapping("/tags")
+    public Page<Tag> getTagPagination(@RequestBody TagPagination tagPagination){
+        return tagService.getPaginationTags(tagPagination.getPage(),tagPagination.getPageSize(),tagPagination.getSortBy());
     }
 
     @PutMapping("/{tagId}")

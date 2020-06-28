@@ -61,16 +61,18 @@ public class ArticleUtil {
 
     private static void saveNewRelation(int articleId, List<Tag> tagList, TagDao tagDao, ArticleAndTagDao articleAndTagDao) {
         List<ArticleAndTag> newRelation = new ArrayList<>();
-        for (Tag tag : tagList) {
-            Optional<Tag> nullable = tagDao.findByTagContent(tag.getTagContent());
-            Tag varTag = nullable.orElse(Tag.builder().tagContent(tag.getTagContent()).relativeNum(0).build());
-            int relativeNum = varTag.getRelativeNum() + 1;
-            varTag.setRelativeNum(relativeNum);
-            int tagId = tagDao.save(varTag).getTagId();
-            ArticleAndTag relation = ArticleAndTag.builder().articleId(articleId).tagId(tagId).build();
-            newRelation.add(relation);
+        if(tagList!=null){
+            for (Tag tag : tagList) {
+                Optional<Tag> nullable = tagDao.findByTagContent(tag.getTagContent());
+                Tag varTag = nullable.orElse(Tag.builder().tagContent(tag.getTagContent()).relativeNum(0).build());
+                int relativeNum = varTag.getRelativeNum() + 1;
+                varTag.setRelativeNum(relativeNum);
+                int tagId = tagDao.save(varTag).getTagId();
+                ArticleAndTag relation = ArticleAndTag.builder().articleId(articleId).tagId(tagId).build();
+                newRelation.add(relation);
+            }
+            articleAndTagDao.saveAll(newRelation);
         }
-        articleAndTagDao.saveAll(newRelation);
     }
 
     private static void deleteOldRelation(Iterator<Tag> tags, TagDao tagDao, ArticleAndTagDao articleAndTagDao, List<ArticleAndTag> oldRelations) {

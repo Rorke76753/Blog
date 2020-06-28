@@ -18,7 +18,7 @@ function GetCurrentBrowser() {
 
 // get ip address
 function GetIpAddress() {
-  return localStorage.getItem("Ip");
+  return localStorage.getItem("ip");
 }
 
 export { GetIpAddress, GetCurrentBrowser };

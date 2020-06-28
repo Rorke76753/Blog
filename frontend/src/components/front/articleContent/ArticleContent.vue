@@ -135,7 +135,7 @@ import oauthService from "../../../http/api/front/oauth/oauthLogin";
 import frontComment from "../../../http/api/front/comment";
 import "@toast-ui/editor/dist/toastui-editor-viewer.css";
 export default {
-  name: "ArticleContent",
+    name: "ArticleContent",
   components: {
     viewer: Viewer
   },
@@ -187,10 +187,13 @@ export default {
       this.$refs.viewer.invoke("setMarkdown", this.articleContent);
     },
     validateThirdPartyToken() {
+      let thirdPartyToken = JSON.parse(
+        sessionStorage.getItem("thirdPartyToken")
+      );
       oauthService
         .validateToken({
-          accessToken: sessionStorage.getItem("thirdPartyToken").accessToken,
-          platform: sessionStorage.getItem("thirdPartyToken").platform
+          accessToken: thirdPartyToken.accessToken,
+          platform: thirdPartyToken.platform
         })
         .then(res => {
           if (res.data.errorMessage === null) {
@@ -204,10 +207,10 @@ export default {
     },
     loginWithGithub() {
       sessionStorage.setItem("afterLogin", this.$route.path);
-      oauthService.getOauthLink()
-      oauthService.getOauthLink("Github").then(res=>{
+      oauthService.getOauthLink();
+      oauthService.getOauthLink("Github").then(res => {
         window.location.href = res.data;
-      })
+      });
     }
   },
   created() {
@@ -215,12 +218,11 @@ export default {
       sessionStorage.getItem("thirdPartyToken") !== null &&
       sessionStorage.getItem("thirdPartyToken") !== undefined
     ) {
-      this.currentUserThirdPartyToken = JSON.parse(
+      let thirdPartyToken = JSON.parse(
         sessionStorage.getItem("thirdPartyToken")
-      ).accessToken;
-      this.platform = JSON.parse(
-        sessionStorage.getItem("thirdPartyToken")
-      ).platform;
+      );
+      this.currentUserThirdPartyToken = thirdPartyToken.accessToken;
+      this.platform = thirdPartyToken.platform;
       this.validateThirdPartyToken();
     }
     this.getCommentList();

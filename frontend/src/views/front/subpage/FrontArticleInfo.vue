@@ -32,8 +32,8 @@
           </el-card>
         </div>
         <el-pagination
-          page-size="10"
-          @current-change = "handleCurrentChange"
+          :page-size="pageSize"
+          @current-change="handleCurrentChange"
           :page-count="totalPage"
           layout="prev, pager, next"
           :total="totalElements"
@@ -108,7 +108,8 @@ export default {
       ],
       currentPage: 1,
       totalElements: 1,
-      totalPage: 1
+      totalPage: 1,
+      pageSize: 10
     };
   },
   methods: {
@@ -121,7 +122,7 @@ export default {
         .dynamicArticlesPagination({
           page: this.currentPage,
           pageSize: 10,
-          sortBy: this.sortBy
+          orderBy: this.sortBy
         })
         .then(res => {
           this.articleInfoList = res.data.content;
@@ -138,14 +139,15 @@ export default {
       this.initData();
     },
     getTags() {
-      let dynamicSearch = {
-        page: 1,
-        pageSize: 10,
-        sortBy: "relativeNum"
-      };
-      frontTagList.getTagWallList(dynamicSearch).then(res => {
-        this.tagList = res.data.content;
-      });
+      frontTagList
+        .getTagWallList({
+          page: 1,
+          pageSize: 10,
+          sortBy: "relativeNum"
+        })
+        .then(res => {
+          this.tagList = res.data.content;
+        });
     }
   },
   created() {

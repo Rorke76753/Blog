@@ -53,9 +53,10 @@ export default {
 
     initData() {
       adminTag
-        .getTagRelativeArticles({
+        .getTagList({
           page: this.currentPage,
-          pageSize: this.pageSize
+          pageSize: this.pageSize,
+          sortBy: "tagId"
         })
         .then(res => {
           this.tagList = res.data.content;
