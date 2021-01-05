@@ -10,7 +10,7 @@
   "dependencies": {
     "@toast-ui/vue-editor": "^2.0.0-alpha",
     "ant-design-vue": "^1.5.3",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "compression-webpack-plugin": "^3.1.0",
     "core-js": "^3.6.4",
     "element-ui": "^2.4.5",
